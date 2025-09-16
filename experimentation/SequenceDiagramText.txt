@@ -1,0 +1,35 @@
+
+Put diagram texts into https://sequencediagram.org to recreate
+
+
+
+
+------------------------------------------------------
+
+
+title Opening and joining a whiteboard session
+
+
+RoomHost->MainServer:Open new room
+note over RoomHost,MainServer:HTTP request will include unique room code
+
+RoomHost<--MainServer:Room opened successfully
+
+
+
+Participant->MainServer:\n\n\nRequest to join room (using unique room code)
+MainServer->RoomHost:Verify room is open
+MainServer<--RoomHost:Room is still open
+
+Participant<--MainServer:Address of RoomHost
+
+Participant->RoomHost:Open connection to room directly
+
+
+
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
