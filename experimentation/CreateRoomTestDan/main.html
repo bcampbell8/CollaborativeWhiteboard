@@ -9,12 +9,21 @@
 <body>
 	<button id="OpenRoom" onClick="window.location.href = '/host'">Open Room</button>
 	
-	<form method="post" action="/joinroom">
-		<input type="text" name="roomcode"></input>
-		<button id="JoinRoom" type="submit" onClick="window.location.href = '/join'">Join Room</button>
+	<form id="my-form" method="get" action="/joinroom">
+		<input type="text" name="name" id="name">
+		<input type="submit" value="Join Room"></input>
 	</form>
 <script>
+const form = document.getElementById('my-form');
 
+form.addEventListener('submit', (evt) => {
+	evt.preventDefault();
+	const formData = new FormData(form);
+	const params = new URLSearchParams(formData);
+	console.log(params.toString());
+	return true;
+});
+// https://stackoverflow.com/questions/57075150/convert-form-into-query-string-vanilla-javascript
 </script>
 </body>
 </html>

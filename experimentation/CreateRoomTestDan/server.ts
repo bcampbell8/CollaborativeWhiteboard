@@ -47,8 +47,8 @@ app.get("/join", (request, response) => {
 	getPage(request, response, "participant.html");
 });
 
-app.post("/joinroom", (request, response) => {
-	console.log(request.body);
+app.get("/joinroom", (request, response) => {
+	console.log(request.params);
 });
 
 
