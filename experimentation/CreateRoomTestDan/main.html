@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport">
+    <title>Main page</title>
+</head>
+
+<body>
+	<button id="OpenRoom" onClick="window.location.href = '/host'">Open Room</button>
+	
+	<form method="post" action="/joinroom">
+		<input type="text" name="roomcode"></input>
+		<button id="JoinRoom" type="submit" onClick="window.location.href = '/join'">Join Room</button>
+	</form>
+<script>
+
+</script>
+</body>
+</html>
