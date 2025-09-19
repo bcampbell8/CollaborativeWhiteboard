@@ -12,13 +12,17 @@
     </div>
 <script>
 const socket = new WebSocket("ws://" + window.location.hostname + ":2210");
+const code = window.location.pathname.split('/').pop();
 socket.onopen = function(event) {
 	console.log("socket opened");
-	socket.send();
+	socket.send(`${code};connect`);
 };
 socket.onmessage = function(event) {
 	alert("msg recieved from server: " + event.data);
-}
+};
+
+
+// socket.send(`${code};${history[history.length - 1]}`);
 </script>
 </body>
 </html>

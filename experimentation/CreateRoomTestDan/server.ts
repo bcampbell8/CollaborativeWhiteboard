@@ -1,11 +1,13 @@
 const express = require('express');
-
+const bodyParser = require('body-parser');
+const shortid = require('shortid');
 
 const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 
 let rooms = [];
-
 
 
 function getPage(request, response, page) {
@@ -24,6 +26,11 @@ app.get("/host", (request, response) => {
 	getPage(request, response, "host.html");
 });
 
+
+app.get("/open", (request, response) => {
+	response.status(200);
+	response.send(shortid.generate());
+});
 
 
 app.get("/close/:id", (request, response) => {
@@ -47,8 +54,14 @@ app.get("/join", (request, response) => {
 	getPage(request, response, "participant.html");
 });
 
-app.get("/joinroom", (request, response) => {
-	console.log(request.params);
+app.post("/joinroom", (request, response) => {
+	// getting this to work made my hairline recede further
+	// than taylor swift flies her jet in a year
+	let code = request.body.code;
+	console.log("code: ");
+	console.log(code);
+	response.status(200);
+	response.redirect(`/join/${code}`);
 });
 
 

@@ -12,9 +12,15 @@
     </div>
 <script>
 console.log(window.location.hostname);
+async function retrieveCode() {
+	const res = await fetch("/open");
+};
+let hostCode = retrieveCode();
+console.log(hostCode);
 const socket = new WebSocket("ws://" + window.location.hostname + ":2210");
 socket.onopen = function(event) {
 	console.log("socket opened");
+	socket.send(`${hostCode};host`);
 };
 socket.onmessage = function(event) {
 	alert("msg recieved from server: " + event.data);
