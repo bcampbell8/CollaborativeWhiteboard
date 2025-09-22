@@ -1,9 +1,7 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const shortid = require('shortid');
+import express from 'express';
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 
 
 
@@ -21,12 +19,6 @@ function getPage(request, response, page: string) {
 
 app.get("/host", (request, response) => {
 	getPage(request, response, "host.html");
-});
-
-
-app.get("/open", (request, response) => {
-	response.status(200);
-	response.send(shortid.generate());
 });
 
 
@@ -61,6 +53,6 @@ app.post("/joinroom", (request, response) => {
 
 
 app.listen(2211, () => {
-	console.log("app listening on port 2211");
+	console.log("Http server listening on port 2211");
 });
 
