@@ -7,11 +7,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-let rooms = [];
-
-
-function getPage(request, response, page) {
-	response.sendFile(page, {root: "."}, function (err) {
+function getPage(request, response, page: string) {
+	response.sendFile(page, {root: "./public"}, function (err) {
 		if (err) {
 			response.status(404);
 			return;
@@ -56,11 +53,7 @@ app.get("/join/:id", (request, response) => {
 });
 
 app.post("/joinroom", (request, response) => {
-	// getting this to work made my hairline recede further
-	// than taylor swift flies her jet in a year
 	let code = request.body.code;
-	console.log("code: " + code);
-	response.status(200);
 	response.redirect(`/join/${code}`);
 });
 
@@ -70,5 +63,4 @@ app.post("/joinroom", (request, response) => {
 app.listen(2211, () => {
 	console.log("app listening on port 2211");
 });
-
 

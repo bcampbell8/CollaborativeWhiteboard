@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport">
+    <title>Host</title>
+</head>
+
+<body>
+    <div id="paintArea">
+        <canvas id="canvas" style="border: 2px solid #000000;"></canvas>
+    </div>
+<style>
+#paintArea {}
+#canvas {
+	width: 80vw;
+	height: 80vh;
+	border: 2px solid #000000;
+	margin: 8vh 8vw 8vh 8vw;
+}
+</style>
+<script>
+console.log(window.location.hostname);
+async function retrieveCode() {
+	const res = await fetch("/open");
+};
+let hostCode = retrieveCode();
+console.log(hostCode);
+const socket = new WebSocket("ws://" + window.location.hostname + ":2210");
+socket.onopen = function(event) {
+	console.log("socket opened");
+	socket.send(`${hostCode};host`);
+};
+socket.onmessage = function(event) {
+	alert("msg recieved from server: " + event.data);
+}
+</script>
+</body>
+</html>

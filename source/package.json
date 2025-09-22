@@ -1,0 +1,25 @@
+{
+  "name": "interactivewhiteboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "httpserver.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node httpserver.ts & node wsserver.ts"
+  },
+  "//": "idk how this works but",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DRatGit123321/InteractiveWhiteboard.git"
+  },
+  "author": "DRichards & BCampbell",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^5.0.3",
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "shortid": "^2.2.17",
+    "typescript": "^5.9.2",
+    "ws": "^8.18.3"
+  }
+}
