@@ -6,12 +6,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 function getPage(request, response, page: string) {
-	response.sendFile(page, {root: "./public"}, function (err) {
-		if (err) {
-			response.status(404);
-			return;
-		}
-	});
+	response.sendFile(page, {root: "./public"}, (err) => { response.status(404); });
 	response.status(200);
 }
 

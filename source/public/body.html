@@ -1,15 +1,39 @@
 <!DOCTYPE html>
 <body>
 <div id="paintArea">
-	<canvas id="canvas" style="border: 2px solid #000000;"></canvas>
+	<canvas class="canvasarea" id="canvas1"></canvas>
+	<canvas class="canvasarea" id="canvas2"></canvas>
+	<canvas class="canvasarea" id="canvas3"></canvas>
+	<canvas class="canvasarea" id="canvas4"></canvas>
 </div>
 <style>
-#canvas {
-	width: 80vw;
-	height: 75vh;
-	border: 1px solid #000000;
-	margin: 8vh 8vw 8vh 8vw;
+html {
+	background: #F5F5F5;
 }
+
+#paintArea {
+	display: grid;
+	grid-template-columns: repeat(2);
+	grid-template-areas:
+	  "a b"
+	  "c d";
+	gap: 0px;
+}
+.canvasarea {
+	background: white;
+	border: 0px solid #000000;
+	/* 49.3 for 1000-1220, 46.6 for above 1700, 49.5 for 1400-1700, 49.4 for 1220-1400, 49.2 for below 1000 */
+	height: 40vh;
+}
+@media screen and (max-width: 1000px) { .canvasarea { width: 49.2vw } }
+@media screen and (min-width: 1000px) and (max-width: 1220px) { .canvasarea { width: 49.3vw } }
+@media screen and (min-width: 1220px) and (max-width: 1400px) { .canvasarea { width: 49.4vw } }
+@media screen and (min-width: 1400px) and (max-width: 1700px) { .canvasarea { width: 49.5vw } }
+@media screen and (min-width: 1700px) { .canvasarea { width: 49.6vw } }
+#canvas1 { grid-area: a; }
+#canvas2 { grid-area: b; }
+#canvas3 { grid-area: c; }
+#canvas4 { grid-area: d; }
 </style>
 
 <div class="control-panel">
@@ -20,5 +44,9 @@
 	<button>Undo</button>
 	<button>Redo</button>
 </div>
+<style>
+.control-panel {}
+</style>
+
 <script src="/canvas.js"></script>
 </body>
