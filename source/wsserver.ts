@@ -7,39 +7,61 @@ import { nanoid as ShortId } from 'nanoid';
 var server = new WebSocketServer({ port: 2210 });
 
 
-function incoming(message: string) {
+var rooms = [];
+
+
+async function handleIncoming(message, socket) {
 	
+	// console.log(typeof message); // message is of type object
+	// console.log(JSON.stringify(message, null, 2)); // returns object with `type` and `data` fields
+	// console.log(message);
+	// console.log(JSON.parse(message.toString()).action);
+	// console.log(JSON.parse(message.toString()).code);
+	// console.log(JSON.parse(message.toString()).info);
+	// return;
 	// parse message
-	// let code = message.substring(0, 6);
-	// let action = message.substring(8, message.length - 1);
+	// ik this is a naive parse but
+	let messageText = JSON.parse(message.toString());
 	
-	// if (action == "connect") {
-		// return [code, 1];
-	// } else if (action == "host") {
-		// return [code, 2];
-	// } else /*action is canvas state*/ {
-		// return [code, 3];
-	// }
+	if (messageText.action == "open") {
+		let newId = ShortId;
+		rooms.push(newId);
+	} else if (messageText.action == "connect") {
+		;
+	} else if (messageText.action == "update") {
+		;
+	} else /*invalid action*/ {
+		socket.send(JSON.stringify({ action: "error", code: null, info: "Invalid action" }));
+	}
 	
-	
-	let [action, code, info] = message.split(';');
+	// socket.send("works?"); // socket requires explicit local definition
+	socket.id = server.getUniqueID(messageText.code);
+	console.log(socket.id);
 }
 
 
 // server.getUniqueID = ShortId;
-server.getUniqueID = function () {
-	return { id: ShortId(), room: "abcdef" };
+server.getUniqueID = function (code) {
+	// information which must be attached to unique and grouped connections is added here
+	// id must be a string, so is stringified before assignment and
+	//   must be parsed back to json before being accessed
+	return JSON.stringify({ connectionId: ShortId(), roomCode: code });
 };
 
 
 server.on('connection', function connection(socket) {
 	
-	socket.id = server.getUniqueID();
+	// socket.id = server.getUniqueID();
 	
 	console.log("wss opened");
 	socket.send("connected\n");
 	
-	socket.on('message', incoming(message));
+	socket.on('message', msg => handleIncoming(msg, socket));
+	
+	// executed at socket.onConnect()
+	server.clients.forEach(function each(client) {
+		// console.log("client.id: " + JSON.stringify(client.id));
+	});
 });
 
 

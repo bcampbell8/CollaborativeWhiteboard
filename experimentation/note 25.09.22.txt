@@ -1,0 +1,34 @@
+
+
+creates the socket
+
+waits for connection
+
+
+on connection:
+
+if action == host:
+add connection to kv map where key:value == hostroomcode:socketconnection
+
+if action == connect:
+add connection to kv map where key:value == roomcode:Array<participants>
+
+
+
+
+protocol
+
+requests:
+action;code;info
+
+open;host
+connect;[code]
+update;[code];[info]
+
+
+responses:
+error;invalidaction
+
+
+
+

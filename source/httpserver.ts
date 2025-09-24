@@ -50,6 +50,16 @@ app.post("/joinroom", (request, response) => {
 });
 
 
+// page dependencies
+// participant and host canvas js
+app.get("/canvas.js", (request, response) => {
+	getPage(request, response, "canvas.js");
+});
+// participant and host central html
+app.get("/body.html", (request, response) => {
+	getPage(request, response, "body.html");
+});
+
 
 
 app.listen(2211, () => {
