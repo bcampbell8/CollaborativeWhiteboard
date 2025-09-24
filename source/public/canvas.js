@@ -43,8 +43,18 @@ const stopDrawing = () => {
     context.closePath();
     // saveHistory();
 };
+const stopDrawingEvent = () => {
+	stopDrawing();
+	window.parent.document.dispatchEvent(new CustomEvent("iframeCanvas", { detail: canvas.toDataURL() }));
+}
 
 
+
+function saveHistory() {
+	if (History.includes(canvas.toDataURL())) {
+		return;
+	}
+}
 
 function cleanCanvas() {
 	context.clearRect(0, 0, canvas.width, canvas.height);
@@ -53,7 +63,7 @@ function cleanCanvas() {
 
 canvas.addEventListener("mousedown", startDrawing);
 canvas.addEventListener("mousemove", drawOnCanvas);
-canvas.addEventListener("mouseup", stopDrawing);
+canvas.addEventListener("mouseup", stopDrawingEvent);
 canvas.addEventListener("mouseleave", stopDrawing);
 
 window.onload = init;

@@ -24,8 +24,8 @@ async function handleIncoming(message, socket) {
 	let messageText = JSON.parse(message.toString());
 	
 	if (messageText.action == "open") {
-		let newId = ShortId;
-		rooms.push(newId);
+		// let newId = ShortId;
+		// rooms.push(newId);
 	} else if (messageText.action == "connect") {
 		;
 	} else if (messageText.action == "update") {
@@ -43,15 +43,14 @@ async function handleIncoming(message, socket) {
 // server.getUniqueID = ShortId;
 server.getUniqueID = function (code) {
 	// information which must be attached to unique and grouped connections is added here
+	// 
 	// id must be a string, so is stringified before assignment and
-	//   must be parsed back to json before being accessed
+	// must be parsed back to json before being accessed
 	return JSON.stringify({ connectionId: ShortId(), roomCode: code });
 };
 
 
 server.on('connection', function connection(socket) {
-	
-	// socket.id = server.getUniqueID();
 	
 	console.log("wss opened");
 	socket.send("connected\n");
