@@ -27,6 +27,14 @@ socket.onopen = function(event) {
 socket.onmessage = function(event) {
 	alert("msg recieved from server: " + event.data);
 }
+
+
+// canvas must be serialised and transmitted over the network from this scriptfile
+// the event listener allows this file to be updated once new lines have been drawn inside the iframe
+window.document.addEventListener("iframeCanvas", (e) => {
+	console.log(e.detail); // e is an object with property `detail` which contains the serialised canvas
+}, false);
+
 </script>
 </body>
 </html>
