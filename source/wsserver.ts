@@ -24,8 +24,7 @@ async function handleIncoming(message, socket) {
 	let messageText = JSON.parse(message.toString());
 	
 	if (messageText.action == "open") {
-		// let newId = ShortId;
-		// rooms.push(newId);
+		let newId = ShortId;
 	} else if (messageText.action == "connect") {
 		;
 	} else if (messageText.action == "update") {
@@ -37,6 +36,10 @@ async function handleIncoming(message, socket) {
 	// socket.send("works?"); // socket requires explicit local definition
 	socket.id = server.getUniqueID(messageText.code);
 	console.log(socket.id);
+	
+	// send connection success response which has current board state
+	// last drawn location can be inferred by client from order of drawing lines
+	socket.send(JSON.stringify({ action: "boardstate", code: messageText.code, info: /*boardstate info*/ }));
 }
 
 

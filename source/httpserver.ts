@@ -12,27 +12,23 @@ function getPage(request, response, page: string) {
 
 
 
+app.get("/", (request, response) => {
+	getPage(request, response, "main.html");
+});
+
+
+
 app.get("/host", (request, response) => {
 	getPage(request, response, "host.html");
 });
 
-
+// host will need additional button to close room
 app.get("/close/:id", (request, response) => {
 	let roomIndex = rooms.indexOf(request.params.id);
 	rooms.splice(roomIndex, 1);
 	response.status(200);
 });
 
-app.get("/allrooms", (request, response) => {
-	response.send(JSON.stringify(rooms));
-});
-
-
-
-
-app.get("/", (request, response) => {
-	getPage(request, response, "main.html");
-});
 
 app.get("/join/:id", (request, response) => {
 	// `:id` is never used because participant.html retrieves the code from the url

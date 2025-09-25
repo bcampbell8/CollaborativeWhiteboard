@@ -1,51 +1,45 @@
 <!DOCTYPE html>
 <body>
 <div id="paintArea">
-	<canvas class="canvasarea" id="canvas1"></canvas>
-	<canvas class="canvasarea" id="canvas2"></canvas>
-	<canvas class="canvasarea" id="canvas3"></canvas>
-	<canvas class="canvasarea" id="canvas4"></canvas>
+	<canvas id="canvas"></canvas>
 </div>
 <style>
 html {
-	background: #F5F5F5;
+	/*background: #F5F5F5;*/
+	background: #AAA;
 }
-
-#paintArea {
-	display: grid;
-	grid-template-columns: repeat(2);
-	grid-template-areas:
-	  "a b"
-	  "c d";
-	gap: 0px;
-}
-.canvasarea {
+#canvas {
 	background: white;
-	border: 0px solid #000000;
-	/* 49.3 for 1000-1220, 46.6 for above 1700, 49.5 for 1400-1700, 49.4 for 1220-1400, 49.2 for below 1000 */
-	height: 40vh;
+	border: 1px solid #000000;
+	width: 100vw;
+	height: 100vh;
+	position: absolute; top: 0; left: 0;
+	z-index: 0;
 }
-@media screen and (max-width: 1000px) { .canvasarea { width: 49.2vw } }
-@media screen and (min-width: 1000px) and (max-width: 1220px) { .canvasarea { width: 49.3vw } }
-@media screen and (min-width: 1220px) and (max-width: 1400px) { .canvasarea { width: 49.4vw } }
-@media screen and (min-width: 1400px) and (max-width: 1700px) { .canvasarea { width: 49.5vw } }
-@media screen and (min-width: 1700px) { .canvasarea { width: 49.6vw } }
-#canvas1 { grid-area: a; }
-#canvas2 { grid-area: b; }
-#canvas3 { grid-area: c; }
-#canvas4 { grid-area: d; }
 </style>
 
 <div class="control-panel">
-	<button>Pen size</button>
-	<button>Pen colour</button>
-	<button>Eraser</button>
-	<button onClick="cleanCanvas()">Clear canvas</button>
-	<button>Undo</button>
-	<button>Redo</button>
+	<button id="moveButton">Move canvas</button>
+	<button id="penButton">Pen size</button>
+	<button id="penColourButton">Pen colour</button>
+	<button id="eraserButton">Eraser</button>
+	<button id="clearButton" onClick="cleanCanvas()">Clear canvas</button>
+	<button id="undoButton">Undo</button>
+	<button id="redoButton">Redo</button>
 </div>
 <style>
-.control-panel {}
+.control-panel > * {
+	z-index: 100;
+}
+
+#penButton {
+	position: static;
+	background-color: #4caf50;
+	color: black;
+	padding: 10px 20px;
+	border: none;
+	cursor: pointer;
+}
 </style>
 
 <script src="/canvas.js"></script>
