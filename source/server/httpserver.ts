@@ -4,9 +4,10 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 
 
-
 function getPage(request, response, page: string) {
-	response.sendFile(page, {root: "./public"}, (err) => { response.status(404); });
+	console.log("getpage entered");
+	response.sendFile(page, {root: "../client/dist"}, (err) => { response.status(404); console.log("getpage err"); });
+	console.log("file sent");
 	response.status(200);
 }
 
@@ -50,6 +51,24 @@ app.get("/canvas.js", (request, response) => {
 app.get("/body.html", (request, response) => {
 	getPage(request, response, "body.html");
 });
+
+
+
+
+// tests -------------------------------------
+
+app.get("/test", (req, res) => {
+	console.log("/test requested");
+	getPage(req, res, "index.html");
+});
+
+app.get("/index-CTMzIyRX.js", (req, res) => {
+	console.log("js requested");
+	getPage(req, res, "assets/index-CTMzIyRX.js");
+});
+
+
+// -------------------------------------------
 
 
 
