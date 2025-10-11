@@ -1,13 +1,17 @@
-import React from 'react'
-// import './App.css'
+import React, { useState } from 'react'
+import './style.css'
+import Canvas from './Canvas.tsx';
+import PaintColourButton from './PaintColourButton.tsx';
 
+
+const startingBrushColour = "#000000";
 
 function App() {
-	// <hr /> tags must be terminated (jsx parser does not pass unterminated tags, unlike html)
+	const [globalBrushColour, updateBrushColour] = useState(startingBrushColour);
+	
 	return (<>
-		<h1>Vite demo</h1>
-		<hr />
-		<hr />
+		<Canvas brushColour={globalBrushColour} />
+		<PaintColourButton initialBrushColour={startingBrushColour} updateBrushColourFunction={updateBrushColour} />
 	</>)
 }
 

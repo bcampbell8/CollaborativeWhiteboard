@@ -6,8 +6,8 @@ app.use(express.urlencoded({ extended: true }));
 
 function getPage(request, response, page: string) {
 	console.log("getpage entered");
-	response.sendFile(page, {root: "../client/dist"}, (err) => { response.status(404); console.log("getpage err"); });
-	console.log("file sent");
+	response.sendFile(page, {root: "../client/dist"}, (err) => { response.status(404); console.log("getpage err"); return; });
+	console.log("file sent: " + page);
 	response.status(200);
 }
 
@@ -62,9 +62,14 @@ app.get("/test", (req, res) => {
 	getPage(req, res, "index.html");
 });
 
-app.get("/index-CTMzIyRX.js", (req, res) => {
+app.get("/assets/:filename", (req, res) => {
 	console.log("js requested");
-	getPage(req, res, "assets/index-CTMzIyRX.js");
+	let file = req.params.filename;
+	if (/index-.{6,10}\.js/.test(file)) {
+		getPage(req, res, file);
+		return;
+	}
+	res.status(404);
 });
 
 
