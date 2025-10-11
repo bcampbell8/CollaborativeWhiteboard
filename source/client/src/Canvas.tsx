@@ -3,6 +3,7 @@ import React, {useLayoutEffect, useState, useRef, type PointerEvent} from 'react
 
 export type CanvasProps = {
 	brushColour: string
+	brushWidth: number
 }
 
 export default function Canvas(props: CanvasProps){
@@ -21,6 +22,7 @@ export default function Canvas(props: CanvasProps){
         setIsDrawing(true);
         if (contextRef.current){
             contextRef.current.strokeStyle = props.brushColour;
+            contextRef.current.lineWidth = props.brushWidth;
             contextRef.current.beginPath();
             contextRef.current.moveTo(e.clientX, e.clientY);
         }
@@ -30,7 +32,6 @@ export default function Canvas(props: CanvasProps){
             return;
         }
         if (contextRef.current){
-			contextRef.current.strokeStyle = props.brushColour;
             contextRef.current.lineTo(e.clientX, e.clientY);
             contextRef.current.stroke();
         }
