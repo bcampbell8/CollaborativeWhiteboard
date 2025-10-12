@@ -4,6 +4,7 @@ import React, {useLayoutEffect, useState, useRef, type PointerEvent} from 'react
 export type CanvasProps = {
 	brushColour: string
 	brushWidth: number
+	backgroundColour: string
 }
 
 export default function Canvas(props: CanvasProps){
@@ -48,6 +49,11 @@ export default function Canvas(props: CanvasProps){
         <canvas id="canvas" 
 			width={window.innerWidth} 
 			height={window.innerHeight}
+			style={{
+				width: "100%",
+				height: "95%",
+				background: props.backgroundColour
+			}}
 			onPointerDown={handlePointerDown}
 			onPointerUp={handlePointerUp}
 			onPointerMove={handlePointerMove}

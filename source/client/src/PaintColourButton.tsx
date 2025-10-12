@@ -9,13 +9,20 @@ function PaintColourButton(props: PaintColourButtonProps) {
 	const [colour, setColour] = useState(props.initialBrushColour);
 	
 	const onColourChange = (value: string) => {
+		setColour(value);
 		props.updateBrushColourFunction(value);
 	}
 	
     return (
     <>
 		<input type="color" id="brushColourInput" value={colour}
-			onChange={e => { let v = e.target.value; setColour(v); onColourChange(v) }}
+			style={{
+				position: "absolute",
+				top: "45px",
+				left: "10px",
+				zIndex: 1
+			}}
+			onChange={e => onColourChange(e.target.value)}
 		/>
     </>
     )
