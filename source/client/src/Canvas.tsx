@@ -44,8 +44,8 @@ export default function Canvas(props: CanvasProps){
         if (contextRef.current){
             contextRef.current.lineTo(e.clientX, e.clientY);
             contextRef.current.stroke();
-            let newLine: Line  = stroke;
-            newLine.push([e.clientX, e.clientY]);
+            let newLine: Line = stroke;
+            newLine.push({x: e.clientX, y: e.clientY});
             setStroke(newLine);
         }
     }
