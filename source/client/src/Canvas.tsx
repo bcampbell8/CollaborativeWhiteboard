@@ -7,17 +7,34 @@ export type CanvasProps = {
 	backgroundColour: string
 }
 
-export type Line = Array<Point>;
+export type Stroke = {
+    strokeColour: string,
+    strokeWidth: number,
+    segments: Array<LineSegment | null>
+    //Add extra fields for other information the stroke needs to keep track of as necessary
+    //Add stroke type to differentiate between line, eraser, etc.
+}
+
+//This will compose a stroke. 
+export type LineSegment = {
+    start: Point | null,
+    finish: Point | null
+}
+
+//Defines a 2D point on the canvas.
 export type Point = [number, number];
+
+
+
 
 
 export default function Canvas(props: CanvasProps){
     const [isDrawing, setIsDrawing] = useState(false);
-    //const [elements, setElements] = useState([]); Consider element list that holds strokes
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const contextRef = useRef<CanvasRenderingContext2D>(null);
-    const [stroke, setStroke] = useState<Line>([]);
-    const [lineHistory, setLineHistory] = useState<Array<Line>>([]);
+    const [lineSegment, setLineSegment] = useState<LineSegment | null>(null);
+    const [stroke, setStroke] = useState<Stroke | null>(null);
+    const [strokeHistory, setStrokeHistory] = useState<Array<Stroke>>([]);
 
     useLayoutEffect(() => {
         const canvas = canvasRef.current as HTMLCanvasElement;
@@ -25,18 +42,29 @@ export default function Canvas(props: CanvasProps){
         contextRef.current = context;
     }, []);
 	
+    //Primary thing this does is begin recording a new stroke.
+    //No segment should be created. Just a stroke initiated.
     const handlePointerDown = (e: PointerEvent) => {
         setIsDrawing(true);
-        if (contextRef.current){
+        // Check if canvas has loaded. If it has, we can begin drawing.
+        // Then load in all the current canvas settings for the stroke to be created and initiate stroke, as well as initialising the first line segment.
+        if (contextRef.current){ 
             contextRef.current.strokeStyle = props.brushColour;
             contextRef.current.lineWidth = props.brushWidth;
             contextRef.current.beginPath();
             contextRef.current.moveTo(e.clientX, e.clientY);
-            let newLine: Line = [];
-            newLine.push([e.clientX, e.clientY]);
-            setStroke(newLine);
+            let newLineSegment: LineSegment = {start: [e.clientX, e.clientY], finish: null}
+            setLineSegment(newLineSegment);
+            let newStroke: Stroke = {
+                strokeColour: contextRef.current.strokeStyle,
+                strokeWidth: contextRef.current.lineWidth,
+                segments: new Array<LineSegment>
+            }
+            setStroke(newStroke);
         }
     }
+
+    //Needs to create a new LineSegment each time mouse is moved.
     const handlePointerMove = (e: PointerEvent) => {
         if (!isDrawing){
             return;
@@ -44,20 +72,46 @@ export default function Canvas(props: CanvasProps){
         if (contextRef.current){
             contextRef.current.lineTo(e.clientX, e.clientY);
             contextRef.current.stroke();
-            let newLine: Line  = stroke;
-            newLine.push([e.clientX, e.clientY]);
-            setStroke(newLine);
+            
+            //Close line segment
+            let oldLineSegment = lineSegment;
+            if (!oldLineSegment){
+                return;
+            }
+            oldLineSegment.finish = [e.clientX, e.clientY];
+            contextRef.current.closePath();
+            stroke?.segments.push(oldLineSegment);
+
+            //Begin new line segment
+            contextRef.current.beginPath();
+            contextRef.current.moveTo(e.clientX,e.clientY);
+            let newLineSegment: LineSegment = {start: [e.clientX, e.clientY], finish: null}
+            setLineSegment(newLineSegment);
+
         }
     }
-    const handlePointerUp = (/*e: PointerEvent*/) => {
+    
+    //Need to close current line segment, add it, then update stroke history.
+    const handlePointerUp = (e: PointerEvent) => {
         setIsDrawing(false);
         if (contextRef.current){
             contextRef.current.closePath();
+            if (!lineSegment){
+                return;
+            }
+            let oldLineSegment = lineSegment;
+            
+            oldLineSegment.finish = [e.clientX, e.clientY];
+            setLineSegment(oldLineSegment);
+            stroke?.segments.push(lineSegment);
         }
-        let updatedLineHistory: Array<Line> = lineHistory;
-        updatedLineHistory.push(stroke);
-        setLineHistory(updatedLineHistory);
-        console.log(lineHistory);
+        let updatedStrokeHistory: Array<Stroke> = strokeHistory;
+        if (!stroke){
+            return;
+        }
+        updatedStrokeHistory.push(stroke);
+        setStrokeHistory(updatedStrokeHistory);
+        console.log(strokeHistory);
     }
     
     return (
