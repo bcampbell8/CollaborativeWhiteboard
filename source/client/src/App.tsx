@@ -1,33 +1,22 @@
-import React, { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import './style.css'
+import React from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import './style.css';
+import Home from './Home.tsx';
+import Host from './Host.tsx';
+import Participant from './Participant.tsx';
 
 
 function App() {
 	return (<>
-		<Router>
+		<BrowserRouter>
 			<div>
-				<nav>
-					<ul>
-						<li>
-							<Link to="/host">Host a room</Link>
-						</li>
-						<li>
-							<Link to="/participate">Join a room</Link>
-						</li>
-					</ul>
-				</nav>
-
 				<Routes>
-					<Route path="/host" exact>
-						<Host />
-					</Route>
-					<Route path="/participate" exact>
-						<Participant />
-					</Route>
+					<Route path="/" element={<Home />} />
+					<Route path="/host" element={<Host />} />
+					<Route path="/participate" element={<Participant />} />
 				</Routes>
 			</div>
-		</Router>
+		</BrowserRouter>
 	</>);
 }
 
