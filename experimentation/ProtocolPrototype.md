@@ -18,6 +18,10 @@
 - Request: Requests to open a room, basically asking for a new socket to be opened?
 - Response: Server assign a room code, sets a socket which future updates will be run through
 
-## Update
+### Update
 - Request: User sends stroke data to update room history
 - Response: Server adds stroke to history, then sends response to all connections with updated room history.
+
+### Close
+- Request: User sends a request to close the room
+- Response: DB sends a redirect action to participants (to home page) and deletes room information
