@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
+import { useParams } from 'react-router-dom';
 import './style.css'
 import Canvas from './assets/Canvas.tsx';
 import PaintColourButton from './assets/PaintColourButton.tsx';
 import BrushWidthSlider from './assets/BrushWidthSlider.tsx';
 import BackgroundColourButton from './assets/BackgroundColourButton.tsx';
 import EraserButton from './assets/EraserButton.tsx';
+import RoomCodeText from './assets/RoomCodeText.tsx';
 
 
 const startingBrushColour = "#000000";
@@ -15,6 +17,9 @@ const startingEraserState = false;
 
 
 function Host() {
+	
+	const { code } = useParams();
+	const decodedMessage = decodeURIComponent(code);
 	
 	function updateErasing(value: boolean) {
 		updateEraserState(value);
@@ -48,10 +53,14 @@ function Host() {
 			updateBackgroundColourFunction={updateBackgroundColour}
 		/>
 		
-		/*<EraserButton
+		<EraserButton
 			initialEraserState={startingEraserState}
 			updateEraserStateFunction={updateErasing}
-		/>*/
+		/>
+		
+		
+		
+		<RoomCodeText text={decodedMessage} />
 	</>)
 }
 

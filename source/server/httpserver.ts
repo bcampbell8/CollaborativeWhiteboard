@@ -6,7 +6,13 @@ app.use(express.urlencoded({ extended: true }));
 
 function getPage(request, response, page: string) {
 	console.log("getpage entered");
-	response.sendFile(page, {root: "../client/dist"}, (err) => { response.status(404); console.log("getpage err"); return; });
+	response.sendFile(
+		page, {root: "../client/dist"},
+		(err) => {
+			response.status(404);
+			console.log("getpage err");
+			return;
+		});
 	console.log("file sent: " + page);
 	response.status(200);
 }

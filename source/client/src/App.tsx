@@ -7,16 +7,17 @@ import Participant from './Participant.tsx';
 
 
 function App() {
+	
+	const redirectToRoom = async function() {
+		const code: string = await fetch("http://" + window.location.hostname + ":2211/joinroom");
+	}
+	
 	return (<>
-		<BrowserRouter>
-			<div>
-				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/host" element={<Host />} />
-					<Route path="/participate" element={<Participant />} />
-				</Routes>
-			</div>
-		</BrowserRouter>
+		<Routes>
+			<Route path="/" element={<Home />} />
+			<Route path="/host/:code" element={<Host />} />
+			<Route path="/participate/:code" element={<Participant />} />
+		</Routes>
 	</>);
 }
 
