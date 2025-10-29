@@ -1,6 +1,5 @@
 import React, {useLayoutEffect, useState, useRef, type PointerEvent} from 'react';
 
-
 export type CanvasProps = {
 	brushColour: string
 	brushWidth: number
@@ -24,10 +23,6 @@ export type LineSegment = {
 //Defines a 2D point on the canvas.
 export type Point = [number, number];
 
-
-
-
-
 export default function Canvas(props: CanvasProps){
     const [isDrawing, setIsDrawing] = useState(false);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -35,12 +30,59 @@ export default function Canvas(props: CanvasProps){
     const [lineSegment, setLineSegment] = useState<LineSegment | null>(null);
     const [stroke, setStroke] = useState<Stroke | null>(null);
     const [strokeHistory, setStrokeHistory] = useState<Array<Stroke>>([]);
+    const [socket, setSocket] = useState<WebSocket>();
 
     useLayoutEffect(() => {
         const canvas = canvasRef.current as HTMLCanvasElement;
         const context = canvas.getContext("2d");
         contextRef.current = context;
+
+        const newSocket = new WebSocket('ws://localhost:2210', 'echo-protocol');
+        setSocket(newSocket);
+
+        newSocket.onopen = () => {
+            console.log('WebSocket connection established');
+        };
+
+        newSocket.onmessage = (event) => {
+            // This is probably quite scuffed and there needs to be more done such as updating stroke history etc.
+            //What about if my colour / thickness is different?
+            if (contextRef.current){
+                const message = JSON.parse(event.data);
+                console.log("incoming:");
+                console.log(message);
+                for(let segment of message.segments){
+                    contextRef.current.beginPath();
+                    contextRef.current.moveTo(segment.start[0], segment.start[1]);
+                    contextRef.current.lineTo(segment.finish[0], segment.finish[1]);
+                    contextRef.current.stroke();
+                    contextRef.current.closePath();
+                }
+            }
+            
+            
+        };
+
+        newSocket.onclose = () => {
+            console.log('WebSocket connection closed');
+        };
+
+        newSocket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        return () => {
+            newSocket.close();
+        };
+
     }, []);
+
+    const sendStroke = () => {
+        if(stroke && socket && socket.readyState === WebSocket.OPEN){
+            socket.send(JSON.stringify(stroke));
+            
+        }
+    }
 	
     //Primary thing this does is begin recording a new stroke.
     //No segment should be created. Just a stroke initiated.
@@ -112,6 +154,7 @@ export default function Canvas(props: CanvasProps){
         updatedStrokeHistory.push(stroke);
         setStrokeHistory(updatedStrokeHistory);
         console.log(strokeHistory);
+        sendStroke();
     }
     
     return (
