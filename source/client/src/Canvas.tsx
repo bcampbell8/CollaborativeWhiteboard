@@ -80,6 +80,8 @@ export default function Canvas(props: CanvasProps){
     const sendStroke = () => {
         if(stroke && socket && socket.readyState === WebSocket.OPEN){
             socket.send(JSON.stringify(stroke));
+            console.log(JSON.stringify(stroke));
+            console.log(typeof(JSON.stringify(stroke)));
             
         }
     }
