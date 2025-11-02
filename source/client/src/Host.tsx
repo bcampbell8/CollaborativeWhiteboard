@@ -16,10 +16,11 @@ const startingEraserState = false;
 
 
 
-function Host() {
+async function Host() {
 	
-	const { code } = useParams();
-	const decodedMessage = decodeURIComponent(code);
+	async function getRoomCode() {
+		const code = await fetch("http://" + window.location.hostname + ":2211/joinroom");
+	}
 	
 	function updateErasing(value: boolean) {
 		updateEraserState(value);
@@ -60,7 +61,7 @@ function Host() {
 		
 		
 		
-		<RoomCodeText text={decodedMessage} />
+		<RoomCodeText text={await getRoomCode()} />
 	</>)
 }
 

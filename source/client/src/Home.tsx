@@ -1,32 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 
 function Home() {
 	
-	const getRoomCode = function() : string {
-		// const code: string = fetch("http://" + window.location.hostname + ":2211/joinroom");
-		let code = "";
-		let characters = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
-		for (let i = 0; i < 6; i++) {
-			code += characters.charAt(Math.floor(Math.random() * characters.length));
-		}
-		return code;
-	}
+	const [formdata, setFormData] = useState({ code: "" });
 	
-	const getCodeFromForm = function() {}
+	const handleChange = (e) => {
+		const { code, value } = e.target;
+		setFormData({
+			...formdata,
+			code: value
+		});
+	};
 	
-	const redirectToRoom = function() {
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		// console.log(JSON.stringify(formdata));
+		window.location.href = `/participate/${encodeURIComponent(formdata.code)}`;
+	};
+	
+	const redirectToRoom = function(e) {
+		// e.preventDefault();
+		console.log(e);
 		// window.location.href = `/participate/${encodeURIComponent(getCodeFromForm())}`;
-	}
+		return false;
+	};
 	
 	return (<>
 		<nav>
-			<Link to={`/host/${encodeURIComponent(getRoomCode())}`}>Host a room</Link>
+			<Link to={"/host"}>Host a room</Link>
 			<p />
-			<form>
-				<input type="text" name="code"></input>
-				<input onClick={redirectToRoom()} type="submit" value="Join"></input>
+			<form onSubmit={handleSubmit}>
+				<input
+					type="text"
+					name="code"
+					value={formdata.code}
+					onChange={handleChange}
+				/>
+				<input type="submit" value="Join" />
 			</form>
 		</nav>
 	</>)
