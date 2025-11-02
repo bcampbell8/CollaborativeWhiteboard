@@ -1,4 +1,5 @@
 import React, {useLayoutEffect, useState, useRef, type PointerEvent} from 'react';
+//import {BrushWidthbuttonProps} from './BrushWidthSlider'
 
 export type CanvasProps = {
 	brushColour: string
@@ -37,7 +38,7 @@ export default function Canvas(props: CanvasProps){
         const context = canvas.getContext("2d");
         contextRef.current = context;
 
-        const newSocket = new WebSocket('ws://localhost:2210', 'echo-protocol');
+        const newSocket = new WebSocket('ws://'+ window.location.hostname +':2210', 'echo-protocol');
         setSocket(newSocket);
 
         newSocket.onopen = () => {
@@ -51,6 +52,10 @@ export default function Canvas(props: CanvasProps){
                 const message = JSON.parse(event.data);
                 console.log("incoming:");
                 console.log(message);
+                // let tempWitdh = props.brushWidth;
+                // let tempColour = props.brushColour;
+                // props.brushColour = message.strokeColour;
+                // props.brushWidth = message.strokeWidth;
                 for(let segment of message.segments){
                     contextRef.current.beginPath();
                     contextRef.current.moveTo(segment.start[0], segment.start[1]);
@@ -58,6 +63,8 @@ export default function Canvas(props: CanvasProps){
                     contextRef.current.stroke();
                     contextRef.current.closePath();
                 }
+                // props.brushColour = tempColour;
+                // props.brushWidth = tempWitdh;
             }
             
             
@@ -114,6 +121,10 @@ export default function Canvas(props: CanvasProps){
             return;
         }
         if (contextRef.current){
+            if (lineSegment && lineSegment.start){
+                contextRef.current.moveTo(lineSegment.start[0], lineSegment.start[1]);
+            }
+            
             contextRef.current.lineTo(e.clientX, e.clientY);
             contextRef.current.stroke();
             

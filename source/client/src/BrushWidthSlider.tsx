@@ -5,7 +5,7 @@ export type BrushWidthButtonProps = {
 	updateBrushWidthFunction: (width: number) => void
 }
 
-function BrushWidthSlider(props: BrushWidthButtonProps) {
+export function BrushWidthSlider(props: BrushWidthButtonProps) {
 	const [width, setWidth] = useState(props.initialWidth);
 	
 	const onWidthChange = (value: number) => {
