@@ -15,11 +15,7 @@ function RoomCodeText(props: RoomCodeTextProps) {
 				bottom: "10px",
 				left: "20px",
 				zIndex: 1
-			}}>
-			<mark style={{
-				backgroundColor: "black",
-				color: "white"
-			}}>{props.text}</mark></p>
+			}}>{props.text}</p>
 		</div>
     </>)
 }

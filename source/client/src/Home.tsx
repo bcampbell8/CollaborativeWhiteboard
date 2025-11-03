@@ -14,17 +14,16 @@ function Home() {
 		});
 	};
 	
-	const handleSubmit = (e) => {
+	async function handleSubmit(e) {
 		e.preventDefault();
 		// console.log(JSON.stringify(formdata));
+		
+		// let roomExists = await fetch("http://" + window.location.hostname + ":2211/verifyroom");
+		// if (roomExists == "false") {
+			// return false; // idk what to do rn to indicate to the user that a room does not exist
+		// }
+		
 		window.location.href = `/participate/${encodeURIComponent(formdata.code)}`;
-	};
-	
-	const redirectToRoom = function(e) {
-		// e.preventDefault();
-		console.log(e);
-		// window.location.href = `/participate/${encodeURIComponent(getCodeFromForm())}`;
-		return false;
 	};
 	
 	return (<>

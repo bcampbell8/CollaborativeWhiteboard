@@ -1,11 +1,19 @@
-import React, {useLayoutEffect, useState, useRef, type PointerEvent} from 'react';
-//import {BrushWidthbuttonProps} from './BrushWidthSlider'
+import React, { useState, useLayoutEffect, useRef, type PointerEvent } from 'react';
+import PaintColourButton from './PaintColourButton.tsx';
+import BrushWidthSlider from './BrushWidthSlider.tsx';
+import BackgroundColourButton from './BackgroundColourButton.tsx';
+import EraserButton from './EraserButton.tsx';
 
 export type CanvasProps = {
-	brushColour: string
-	brushWidth: number
-	backgroundColour: string
+	sendStroke: (stroke: Stroke) => void
+	recievedStroke: Stroke
 }
+
+const startingBrushColour = "#000000";
+const startingBrushWidth = 5;
+const startingBackgroundColour = "#F0F0F0";
+const startingEraserState = false;
+
 
 export type Stroke = {
     strokeColour: string,
@@ -24,74 +32,55 @@ export type LineSegment = {
 //Defines a 2D point on the canvas.
 export type Point = [number, number];
 
-export default function Canvas(props: CanvasProps){
+export default function Canvas(props: CanvasProps) {
+	
+	const [globalBrushColour, updateBrushColour] = useState(startingBrushColour);
+	const [globalBrushWidth, updateBrushWidth] = useState(startingBrushWidth);
+	const [globalBackgroundColour, updateBackgroundColour] = useState(startingBackgroundColour);
+	const [globalEraserState, updateEraserState] = useState(startingEraserState);
+	
+	
     const [isDrawing, setIsDrawing] = useState(false);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const contextRef = useRef<CanvasRenderingContext2D>(null);
     const [lineSegment, setLineSegment] = useState<LineSegment | null>(null);
     const [stroke, setStroke] = useState<Stroke | null>(null);
     const [strokeHistory, setStrokeHistory] = useState<Array<Stroke>>([]);
-    const [socket, setSocket] = useState<WebSocket>();
-
-    useLayoutEffect(() => {
-        const canvas = canvasRef.current as HTMLCanvasElement;
+	
+	
+	function drawStroke(stroke: Stroke) {
+		console.log("drawing: " + JSON.stringify(stroke));
+		if (JSON.stringify(stroke) == "{}") {
+			return;
+		}
+		if (contextRef.current) {
+			console.log("incoming:");
+			console.log(stroke);
+			// let tempWitdh = props.brushWidth;
+			// let tempColour = props.brushColour;
+			// props.brushColour = stroke.strokeColour;
+			// props.brushWidth = stroke.strokeWidth;
+			for (let segment of stroke.segments) {
+				contextRef.current.beginPath();
+				contextRef.current.moveTo(segment.start[0], segment.start[1]);
+				contextRef.current.lineTo(segment.finish[0], segment.finish[1]);
+				contextRef.current.stroke();
+				contextRef.current.closePath();
+			}
+			// props.brushColour = tempColour;
+			// props.brushWidth = tempWitdh;
+		}
+	}
+	
+	
+	useLayoutEffect(() => {
+		const canvas = canvasRef.current as HTMLCanvasElement;
         const context = canvas.getContext("2d");
         contextRef.current = context;
-
-        const newSocket = new WebSocket('ws://'+ window.location.hostname +':2210', 'echo-protocol');
-        setSocket(newSocket);
-
-        newSocket.onopen = () => {
-            console.log('WebSocket connection established');
-        };
-
-        newSocket.onmessage = (event) => {
-            // This is probably quite scuffed and there needs to be more done such as updating stroke history etc.
-            //What about if my colour / thickness is different?
-            if (contextRef.current){
-                const message = JSON.parse(event.data);
-                console.log("incoming:");
-                console.log(message);
-                // let tempWitdh = props.brushWidth;
-                // let tempColour = props.brushColour;
-                // props.brushColour = message.strokeColour;
-                // props.brushWidth = message.strokeWidth;
-                for(let segment of message.segments){
-                    contextRef.current.beginPath();
-                    contextRef.current.moveTo(segment.start[0], segment.start[1]);
-                    contextRef.current.lineTo(segment.finish[0], segment.finish[1]);
-                    contextRef.current.stroke();
-                    contextRef.current.closePath();
-                }
-                // props.brushColour = tempColour;
-                // props.brushWidth = tempWitdh;
-            }
-            
-            
-        };
-
-        newSocket.onclose = () => {
-            console.log('WebSocket connection closed');
-        };
-
-        newSocket.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
-
-        return () => {
-            newSocket.close();
-        };
-
-    }, []);
-
-    const sendStroke = () => {
-        if(stroke && socket && socket.readyState === WebSocket.OPEN){
-            socket.send(JSON.stringify(stroke));
-            console.log(JSON.stringify(stroke));
-            console.log(typeof(JSON.stringify(stroke)));
-            
-        }
-    }
+		
+		drawStroke(props.recievedStroke);
+	}, []);
+	
 	
     //Primary thing this does is begin recording a new stroke.
     //No segment should be created. Just a stroke initiated.
@@ -101,8 +90,8 @@ export default function Canvas(props: CanvasProps){
         // Then load in all the current canvas settings for the stroke to be created and initiate stroke,
 		// as well as initialising the first line segment.
         if (contextRef.current){ 
-            contextRef.current.strokeStyle = props.brushColour;
-            contextRef.current.lineWidth = props.brushWidth;
+            contextRef.current.strokeStyle = globalBrushColour;
+            contextRef.current.lineWidth = globalBrushWidth;
             contextRef.current.beginPath();
             contextRef.current.moveTo(e.clientX, e.clientY);
             let newLineSegment: LineSegment = {start: [e.clientX, e.clientY], finish: null}
@@ -166,11 +155,37 @@ export default function Canvas(props: CanvasProps){
         updatedStrokeHistory.push(stroke);
         setStrokeHistory(updatedStrokeHistory);
         console.log(strokeHistory);
-        sendStroke();
+        props.sendStroke(stroke);
     }
+	
+	
+	const updateErasing = () => {
+		updateEraserState();
+	};
     
     return (
     <>
+		<BrushWidthSlider
+			initialWidth={globalBrushWidth}
+			updateBrushWidthFunction={updateBrushWidth}
+		/>
+		
+		<PaintColourButton
+			initialBrushColour={globalBrushColour}
+			updateBrushColourFunction={updateBrushColour}
+		/>
+		
+		<BackgroundColourButton
+			initialBackgroundColour={globalBackgroundColour}
+			updateBackgroundColourFunction={updateBackgroundColour}
+		/>
+		
+		<EraserButton
+			initialEraserState={globalEraserState}
+			updateEraserStateFunction={updateErasing}
+		/>
+		
+		
         <canvas id="canvas" 
 			width={window.innerWidth} 
 			height={window.innerHeight}

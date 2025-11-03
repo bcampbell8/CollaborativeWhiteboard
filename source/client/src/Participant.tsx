@@ -1,18 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useLayoutEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import './style.css'
 import Canvas from './assets/Canvas.tsx';
+import type { Stroke } from './assets/Canvas.tsx';
 import PaintColourButton from './assets/PaintColourButton.tsx';
 import BrushWidthSlider from './assets/BrushWidthSlider.tsx';
 import BackgroundColourButton from './assets/BackgroundColourButton.tsx';
 import EraserButton from './assets/EraserButton.tsx';
 import RoomCodeText from './assets/RoomCodeText.tsx';
-
-
-const startingBrushColour = "#000000";
-const startingBrushWidth = 5;
-const startingBackgroundColour = "#F0F0F0";
-const startingEraserState = false;
 
 
 
@@ -21,43 +16,57 @@ function Participant() {
 	const { code } = useParams();
 	const roomCode = decodeURIComponent(code);
 	
-	function updateErasing(value: boolean) {
-		updateEraserState(value);
-		updateBrushColour(globalBackgroundColour);
+	const [lineInfo, setLineInfo] = useState({});
+	const [contextRef, setContextRef] = useState();
+    const [socket, setSocket] = useState<WebSocket>();
+	const [recievedStroke, setRecievedStroke] = useState({});
+	
+	
+    const sendStroke = (stroke: Stroke) => {
+        if(stroke && socket && socket.readyState === WebSocket.OPEN){
+            socket.send(JSON.stringify(stroke));
+            console.log(JSON.stringify(stroke));            
+        }
+    }
+	
+	function socketOnMessage(event) {
+		// This is probably quite scuffed and there needs to be more done such as updating stroke history etc.
+		//What about if my colour / thickness is different?
+		const message = JSON.parse(event.data);
+		setRecievedStroke(message);
 	}
 	
-	const [globalBrushColour, updateBrushColour] = useState(startingBrushColour);
-	const [globalBrushWidth, updateBrushWidth] = useState(startingBrushWidth);
-	const [globalBackgroundColour, updateBackgroundColour] = useState(startingBackgroundColour);
-	const [globalEraserState, updateEraserState] = useState(startingEraserState);
+    useLayoutEffect(() => {
+        const newSocket = new WebSocket('ws://'+ window.location.hostname +':2210', 'echo-protocol');
+        setSocket(newSocket);
+
+        newSocket.onopen = () => {
+            console.log('WebSocket connection established');
+        };
+
+        newSocket.onmessage = socketOnMessage;
+
+        newSocket.onclose = () => {
+            console.log('WebSocket connection closed');
+        };
+
+        newSocket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        return () => {
+            newSocket.close();
+        };
+
+    }, []);
+	
 	
 	return (<>
 		<Canvas
-			brushColour={globalBrushColour}
-			brushWidth={globalBrushWidth}
-			backgroundColour={globalBackgroundColour}
+			sendStroke={sendStroke}
+			updateContextRef={setContextRef}
+			recievedStroke={recievedStroke}
 		/>
-		
-		<BrushWidthSlider
-			initialWidth={startingBrushWidth}
-			updateBrushWidthFunction={updateBrushWidth}
-		/>
-		
-		<PaintColourButton
-			initialBrushColour={startingBrushColour}
-			updateBrushColourFunction={updateBrushColour}
-		/>
-		
-		<BackgroundColourButton
-			initialBackgroundColour={startingBackgroundColour}
-			updateBackgroundColourFunction={updateBackgroundColour}
-		/>
-		
-		/*<EraserButton
-			initialEraserState={startingEraserState}
-			updateEraserStateFunction={updateErasing}
-		/>*/
-		
 		
 		<RoomCodeText text={roomCode} />
 	</>)

@@ -7,7 +7,8 @@ app.use(express.urlencoded({ extended: true }));
 function getPage(request, response, page: string) {
 	console.log("getpage entered");
 	response.sendFile(
-		page, {root: "../client/dist"},
+		page,
+		{root: "../client/dist"},
 		(err) => {
 			response.status(404);
 			console.log("getpage err");

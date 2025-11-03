@@ -1,17 +1,25 @@
 import express from 'express';
-import {WebSocket, WebSocketServer, Server} from 'ws';
+import {WebSocket, WebSocketServer} from 'ws';
 
 
 const app = express();
-const wss = new WebSocketServer({port: 2210});
+
+let wsport = 2210;
+const wss = new WebSocketServer({port: wsport});
+console.log(`WS server is listening on port ${wsport}`);
 
 wss.on('connection', (ws) => {
-    console.log("New client connected");
+    console.log("New client connected to server");
 
     ws.on('message', (message) => {
-        console.log(`Received Message: ${message}`);
+        console.log(`Server Received Message: ${message}`);
+		let parsedMsg = JSON.parse(message);
+		if (message.request && message.request == "roomcode") {
+			ws.send(JSON.stringify({ response: "roomcode", code: createNewCode() }));
+			return;
+		}
         //Broadcast message to all connected clients
-        console.log(typeof(message));
+        // console.log(typeof(message));
         wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
                 client.send(message.toString());
@@ -21,10 +29,36 @@ wss.on('connection', (ws) => {
 
     ws.on('close', () => {
         console.log('Client disconnected');
-    })
-})
+    });
+});
 
-const PORT = 2211;
-app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
-})
+function createNewCode() {
+	let output = "";
+	let characters = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+	let charlen = characters.length;
+	for (let i = 0; i < 6; i++) {
+		output += characters[Math.floor(Math.random() * charlen)];
+	}
+	
+	// add roomcode to db
+	
+	return output;
+}
+
+
+app.get("/verifyroom", (request, response) => {
+	
+	// check if room in db
+	
+	response.send("true");
+});
+
+const httpport = 2211;
+app.listen(httpport, () => {
+    console.log(`HTTP server is listening on port ${httpport}`);
+});
+
+
+
+
+
