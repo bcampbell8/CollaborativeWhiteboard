@@ -80,8 +80,11 @@ export default function Canvas(props: CanvasProps) {
         const context = canvas.getContext("2d");
         contextRef.current = context;
 		
+        //Updates canvas whenevr a stroke is received
 		drawStroke(props.recievedStroke);
-	}, []);
+
+        //Need to include the props here in dependency array
+	}, [props.recievedStroke]);
 	
 	
     //Primary thing this does is begin recording a new stroke.
