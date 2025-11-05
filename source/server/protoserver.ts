@@ -14,10 +14,10 @@ wss.on('connection', (ws) => {
     ws.on('message', (message) => {
         console.log(`Server Received Message: ${message}`);
 		let parsedMsg = JSON.parse(message);
-		if (message.request && message.request == "roomcode") {
-			ws.send(JSON.stringify({ response: "roomcode", code: createNewCode() }));
-			return;
-		}
+		// if (message.request && message.request == "roomcode") {
+			// ws.send(JSON.stringify({ response: "roomcode", code: createNewCode() }));
+			// return;
+		// }
         //Broadcast message to all connected clients
         // console.log(typeof(message));
         wss.clients.forEach((client) => {
