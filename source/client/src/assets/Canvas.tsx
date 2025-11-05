@@ -61,11 +61,13 @@ export default function Canvas(props: CanvasProps) {
 			// props.brushColour = stroke.strokeColour;
 			// props.brushWidth = stroke.strokeWidth;
 			for (let segment of stroke.segments) {
+				contextRef.current.strokeStyle = stroke.strokeColour;
 				contextRef.current.beginPath();
 				contextRef.current.moveTo(segment.start[0], segment.start[1]);
 				contextRef.current.lineTo(segment.finish[0], segment.finish[1]);
 				contextRef.current.stroke();
 				contextRef.current.closePath();
+				contextRef.current.strokeStyle = stroke.globalBrushColour;
 			}
 			// props.brushColour = tempColour;
 			// props.brushWidth = tempWitdh;
