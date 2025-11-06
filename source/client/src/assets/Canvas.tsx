@@ -50,7 +50,7 @@ export default function Canvas(props: CanvasProps) {
 	const [movingCanvasState, updateMovingCanvasState] = useState(startingMovingCanvasState);
 	
 	
-    const [isDrawing, setIsDrawing] = useState(false);
+    const [isPointerDown, setIsPointerDown] = useState(false);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const contextRef = useRef<CanvasRenderingContext2D>(null);
     const [lineSegment, setLineSegment] = useState<LineSegment | null>(null);
@@ -104,7 +104,7 @@ export default function Canvas(props: CanvasProps) {
     //Primary thing this does is begin recording a new stroke.
     //No segment should be created. Just a stroke initiated.
     const handlePointerDown = (e: PointerEvent) => {
-		setIsDrawing(true);
+		setIsPointerDown(true);
 		if (movingCanvasState == false) {
 			// Check if canvas has loaded. If it has, we can begin drawing.
 			// Then load in all the current canvas settings for the stroke to be created and initiate stroke,
@@ -139,7 +139,7 @@ export default function Canvas(props: CanvasProps) {
 
     //Needs to create a new LineSegment each time mouse is moved.
     const handlePointerMove = (e: PointerEvent) => {
-		if (!isDrawing){
+		if (!isPointerDown){
 			return;
 		}
 		if (movingCanvasState == false) {
@@ -184,7 +184,7 @@ export default function Canvas(props: CanvasProps) {
     
     //Need to close current line segment, add it, then update stroke history.
     const handlePointerUp = (e: PointerEvent) => {
-		setIsDrawing(false);
+		setIsPointerDown(false);
 		if (movingCanvasState == false) {
 			if (contextRef.current){
 				contextRef.current.closePath();
