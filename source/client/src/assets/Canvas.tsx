@@ -59,7 +59,7 @@ export default function Canvas(props: CanvasProps) {
 	
 	
 	function drawStroke(stroke: Stroke) {
-		console.log("drawing: " + JSON.stringify(stroke));
+		// console.log("drawing: " + JSON.stringify(stroke));
 		if (JSON.stringify(stroke) == "{}") {
 			return;
 		}
@@ -130,10 +130,10 @@ export default function Canvas(props: CanvasProps) {
 		} else {
 			setPreviousX(e.clientX);
 			setPreviousY(e.clientY);
-			console.log("e.client: " + [e.clientX, e.clientY]);
-			console.log("diff: " + [diffX, diffY]);
-			console.log("prev: " + [previousX, previousY]);
-			console.log("abs canvas loc: " + absoluteCanvasLocation);
+			// console.log("e.client: " + [e.clientX, e.clientY]);
+			// console.log("diff: " + [diffX, diffY]);
+			// console.log("prev: " + [previousX, previousY]);
+			// console.log("abs canvas loc: " + absoluteCanvasLocation);
 		}
     }
 
@@ -203,13 +203,13 @@ export default function Canvas(props: CanvasProps) {
 			}
 			updatedStrokeHistory.push(stroke);
 			setStrokeHistory(updatedStrokeHistory);
-			console.log(strokeHistory);
+			// console.log(strokeHistory);
 			props.sendStroke(stroke);
 		} else {
-			console.log("diff: " + [diffX, diffY]);
-			console.log("prev: " + [previousX, previousY]);
-			console.log("p+d-ecl should be 0: " + [previousX + diffX - e.clientX, previousY + diffY - e.clientY]);
-			console.log("abs canvas loc: " + absoluteCanvasLocation);
+			// console.log("diff: " + [diffX, diffY]);
+			// console.log("prev: " + [previousX, previousY]);
+			// console.log("p+d-ecl should be 0: " + [previousX + diffX - e.clientX, previousY + diffY - e.clientY]);
+			// console.log("abs canvas loc: " + absoluteCanvasLocation);
 		}
     }
 	
