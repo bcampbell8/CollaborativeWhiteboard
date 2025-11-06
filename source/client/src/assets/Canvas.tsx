@@ -1,4 +1,5 @@
 import React, { useState, useLayoutEffect, useRef, type PointerEvent } from 'react';
+import MoveCanvasToggle from './MoveCanvasToggle.tsx';
 import PaintColourButton from './PaintColourButton.tsx';
 import BrushWidthSlider from './BrushWidthSlider.tsx';
 import BackgroundColourButton from './BackgroundColourButton.tsx';
@@ -13,9 +14,11 @@ const startingBrushColour = "#000000";
 const startingBrushWidth = 5;
 const startingBackgroundColour = "#F0F0F0";
 const startingEraserState = false;
+const startingMovingCanvasState = false;
 
 
 export type Stroke = {
+	strokeDisplacement: Array<number, number>
     strokeColour: string,
     strokeWidth: number,
     segments: Array<LineSegment | null>
@@ -34,10 +37,17 @@ export type Point = [number, number];
 
 export default function Canvas(props: CanvasProps) {
 	
+	const [absoluteCanvasLocation, updateAbsoluteCanvasLocation] = useState([0, 0]);
+	const [previousX, setPreviousX] = useState(0);
+	const [previousY, setPreviousY] = useState(0);
+	const [diffX, setDiffX] = useState(0);
+	const [diffY, setDiffY] = useState(0);
+	
 	const [globalBrushColour, updateBrushColour] = useState(startingBrushColour);
 	const [globalBrushWidth, updateBrushWidth] = useState(startingBrushWidth);
 	const [globalBackgroundColour, updateBackgroundColour] = useState(startingBackgroundColour);
 	const [globalEraserState, updateEraserState] = useState(startingEraserState);
+	const [movingCanvasState, updateMovingCanvasState] = useState(startingMovingCanvasState);
 	
 	
     const [isDrawing, setIsDrawing] = useState(false);
@@ -54,23 +64,20 @@ export default function Canvas(props: CanvasProps) {
 			return;
 		}
 		if (contextRef.current) {
-			console.log("incoming:");
-			console.log(stroke);
-			// let tempWitdh = props.brushWidth;
-			// let tempColour = props.brushColour;
-			// props.brushColour = stroke.strokeColour;
-			// props.brushWidth = stroke.strokeWidth;
+			// console.log("incoming:");
+			// console.log(stroke);
+			
 			for (let segment of stroke.segments) {
 				contextRef.current.strokeStyle = stroke.strokeColour;
+				contextRef.current.lineWidth = stroke.strokeWidth;
 				contextRef.current.beginPath();
-				contextRef.current.moveTo(segment.start[0], segment.start[1]);
-				contextRef.current.lineTo(segment.finish[0], segment.finish[1]);
+				contextRef.current.moveTo(segment.start[0] - absoluteCanvasLocation[0], segment.start[1] - absoluteCanvasLocation[1]);
+				contextRef.current.lineTo(segment.finish[0] - absoluteCanvasLocation[0], segment.finish[1] - absoluteCanvasLocation[1]);
 				contextRef.current.stroke();
 				contextRef.current.closePath();
 				contextRef.current.strokeStyle = stroke.globalBrushColour;
+				contextRef.current.lineWidth = stroke.globalBrushWidth;
 			}
-			// props.brushColour = tempColour;
-			// props.brushWidth = tempWitdh;
 		}
 	}
 	
@@ -81,86 +88,129 @@ export default function Canvas(props: CanvasProps) {
         contextRef.current = context;
 		
         //Updates canvas whenevr a stroke is received
+		let updatedStrokeHistory: Array<Stroke> = strokeHistory;
+		if (!props.recievedStroke){
+			return;
+		}
+		strokeHistory.push(props.recievedStroke);
+		setStrokeHistory(updatedStrokeHistory);
 		drawStroke(props.recievedStroke);
 
         //Need to include the props here in dependency array
 	}, [props.recievedStroke]);
 	
 	
+	
     //Primary thing this does is begin recording a new stroke.
     //No segment should be created. Just a stroke initiated.
     const handlePointerDown = (e: PointerEvent) => {
-        setIsDrawing(true);
-        // Check if canvas has loaded. If it has, we can begin drawing.
-        // Then load in all the current canvas settings for the stroke to be created and initiate stroke,
-		// as well as initialising the first line segment.
-        if (contextRef.current){ 
-            contextRef.current.strokeStyle = globalBrushColour;
-            contextRef.current.lineWidth = globalBrushWidth;
-            contextRef.current.beginPath();
-            contextRef.current.moveTo(e.clientX, e.clientY);
-            let newLineSegment: LineSegment = {start: [e.clientX, e.clientY], finish: null}
-            setLineSegment(newLineSegment);
-            let newStroke: Stroke = {
-                strokeColour: contextRef.current.strokeStyle,
-                strokeWidth: contextRef.current.lineWidth,
-                segments: new Array<LineSegment>
-            }
-            setStroke(newStroke);
-        }
+		setIsDrawing(true);
+		if (movingCanvasState == false) {
+			// Check if canvas has loaded. If it has, we can begin drawing.
+			// Then load in all the current canvas settings for the stroke to be created and initiate stroke,
+			// as well as initialising the first line segment.
+			if (contextRef.current) {
+				contextRef.current.strokeStyle = globalBrushColour;
+				contextRef.current.lineWidth = globalBrushWidth;
+				contextRef.current.beginPath();
+				contextRef.current.moveTo(e.clientX, e.clientY);
+				let newLineSegment: LineSegment = {
+					start: [absoluteCanvasLocation[0] + e.clientX, absoluteCanvasLocation[1] + e.clientY],
+					finish: null
+				}
+				setLineSegment(newLineSegment);
+				let newStroke: Stroke = {
+					strokeDisplacement: absoluteCanvasLocation,
+					strokeColour: contextRef.current.strokeStyle,
+					strokeWidth: contextRef.current.lineWidth,
+					segments: new Array<LineSegment>
+				}
+				setStroke(newStroke);
+			}
+		} else {
+			setPreviousX(e.clientX);
+			setPreviousY(e.clientY);
+			console.log("e.client: " + [e.clientX, e.clientY]);
+			console.log("diff: " + [diffX, diffY]);
+			console.log("prev: " + [previousX, previousY]);
+			console.log("abs canvas loc: " + absoluteCanvasLocation);
+		}
     }
 
     //Needs to create a new LineSegment each time mouse is moved.
     const handlePointerMove = (e: PointerEvent) => {
-        if (!isDrawing){
-            return;
-        }
-        if (contextRef.current){
-            if (lineSegment && lineSegment.start){
-                contextRef.current.moveTo(lineSegment.start[0], lineSegment.start[1]);
-            }
-            
-            contextRef.current.lineTo(e.clientX, e.clientY);
-            contextRef.current.stroke();
-            //Close line segment
-            let oldLineSegment = lineSegment;
-            if (!oldLineSegment){
-                return;
-            }
-            oldLineSegment.finish = [e.clientX, e.clientY];
-            contextRef.current.closePath();
-            stroke?.segments.push(oldLineSegment);
+		if (!isDrawing){
+			return;
+		}
+		if (movingCanvasState == false) {
+			if (contextRef.current){
+				if (lineSegment && lineSegment.start){
+					contextRef.current.moveTo(lineSegment.start[0] - absoluteCanvasLocation[0], lineSegment.start[1] - absoluteCanvasLocation[1]);
+				}
+				
+				contextRef.current.lineTo(e.clientX, e.clientY);
+				contextRef.current.stroke();
+				//Close line segment
+				let oldLineSegment = lineSegment;
+				if (!oldLineSegment){
+					return;
+				}
+				oldLineSegment.finish = [absoluteCanvasLocation[0] + e.clientX, absoluteCanvasLocation[1] + e.clientY];
+				contextRef.current.closePath();
+				stroke?.segments.push(oldLineSegment);
 
-            //Begin new line segment
-            contextRef.current.beginPath();
-            contextRef.current.moveTo(e.clientX,e.clientY);
-            let newLineSegment: LineSegment = {start: [e.clientX, e.clientY], finish: null}
-            setLineSegment(newLineSegment);
-        }
+				//Begin new line segment
+				contextRef.current.beginPath();
+				contextRef.current.moveTo(e.clientX,e.clientY);
+				let newLineSegment: LineSegment = {
+					start: [absoluteCanvasLocation[0] + e.clientX, absoluteCanvasLocation[1] + e.clientY],
+					finish: null
+				}
+				setLineSegment(newLineSegment);
+			}
+		} else {
+			setDiffX(previousX - e.clientX);
+			setDiffY(previousY - e.clientY);
+			updateAbsoluteCanvasLocation([absoluteCanvasLocation[0] + diffX, absoluteCanvasLocation[1] + diffY]);
+			setPreviousX(e.clientX);
+			setPreviousY(e.clientY);
+			
+			contextRef.current.clearRect(0, 0, canvas.width, canvas.height);
+			for (const stroke of strokeHistory) {
+				drawStroke(stroke);
+			}
+		}
     }
     
     //Need to close current line segment, add it, then update stroke history.
     const handlePointerUp = (e: PointerEvent) => {
-        setIsDrawing(false);
-        if (contextRef.current){
-            contextRef.current.closePath();
-            if (!lineSegment){
-                return;
-            }
-            let oldLineSegment = lineSegment;
-            
-            oldLineSegment.finish = [e.clientX, e.clientY];
-            setLineSegment(oldLineSegment);
-            stroke?.segments.push(lineSegment);
-        }
-        let updatedStrokeHistory: Array<Stroke> = strokeHistory;
-        if (!stroke){
-            return;
-        }
-        updatedStrokeHistory.push(stroke);
-        setStrokeHistory(updatedStrokeHistory);
-        console.log(strokeHistory);
-        props.sendStroke(stroke);
+		setIsDrawing(false);
+		if (movingCanvasState == false) {
+			if (contextRef.current){
+				contextRef.current.closePath();
+				if (!lineSegment){
+					return;
+				}
+				let oldLineSegment = lineSegment;
+				
+				oldLineSegment.finish = [absoluteCanvasLocation[0] + e.clientX, absoluteCanvasLocation[1] + e.clientY];
+				setLineSegment(oldLineSegment);
+				stroke?.segments.push(lineSegment);
+			}
+			let updatedStrokeHistory: Array<Stroke> = strokeHistory;
+			if (!stroke){
+				return;
+			}
+			updatedStrokeHistory.push(stroke);
+			setStrokeHistory(updatedStrokeHistory);
+			console.log(strokeHistory);
+			props.sendStroke(stroke);
+		} else {
+			console.log("diff: " + [diffX, diffY]);
+			console.log("prev: " + [previousX, previousY]);
+			console.log("p+d-ecl should be 0: " + [previousX + diffX - e.clientX, previousY + diffY - e.clientY]);
+			console.log("abs canvas loc: " + absoluteCanvasLocation);
+		}
     }
 	
 	
@@ -170,6 +220,10 @@ export default function Canvas(props: CanvasProps) {
     
     return (
     <>
+		<MoveCanvasToggle
+			updateMovingCanvasFunction={updateMovingCanvasState}
+		/>
+		
 		<BrushWidthSlider
 			initialWidth={globalBrushWidth}
 			updateBrushWidthFunction={updateBrushWidth}
