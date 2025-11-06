@@ -9,6 +9,7 @@ Absolutely necessary:
 - Roomcode
 - Associated websocket
 - Stroke History
+- Participant IDs / People currently in room (To track who makes strokes for undo/redo functionality)
 
 Optional for additional features
 - Active participants (To display a user count to users within a room)
