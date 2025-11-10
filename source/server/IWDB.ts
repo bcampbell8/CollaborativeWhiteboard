@@ -4,7 +4,39 @@ import {MongoClient} from 'mongodb';
 const url = 'mongodb://localhost:27017';
 const client = new MongoClient(url);
 
-const dbName = 'Rooms';
+//Provide reference name for database and table (collection)
+const dbName = 'IWDB';
+const collectionName = 'Rooms';
+//const roomsSchema = new mongo
+
+async function CreateDatabaseAndCollection(){
+    const client = new MongoClient(url);
+
+    //Awaits connection from mongo client instance?
+    await client.connect();
+    console.log("Backend connected");
+
+    //Create database and collction on client 
+    try{
+        const db = client.db(dbName);
+        await db.createCollection(collectionName, );
+    }
+    catch(err){
+        console.log(err);
+    }
+    finally{
+        await client.close();
+        console.log("Connection closed");
+    } 
+
+}
+
+async function main(){
+    CreateDatabaseAndCollection();
+
+}
+
+main();
 
 //note to self: employ response codes for calls to express api
 
@@ -34,4 +66,3 @@ When server is closed, truncate the schema
 
 */
 
-async function 
