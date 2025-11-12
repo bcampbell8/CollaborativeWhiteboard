@@ -1,32 +1,15 @@
-import React, { useState, useLayoutEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import './style.css'
 import Canvas, { type Stroke } from './assets/Canvas.tsx';
 import RoomCodeText from './assets/RoomCodeText.tsx';
-import type {Room} from '../../server/IWDB.ts'
+import type { Room } from '../../server/IWDB.ts'
 
 
 
 function Host() {
 
-	async function getRoomData() {
-		try{
-			const response = await fetch("http://localhost:2211/create");
-			if (!response.ok){
-				throw new Error(`Error retrieving room creation data: ${response.status}`);
-			}
-			const data = response.json();
-			console.log(data);
-			return data;
-		} catch (error){
-			console.error(error);
-			return null;
-		}
-	}
-	let roomCode = "";
-
-	const [room, setRoom] = useState();
-	const [lineInfo, setLineInfo] = useState({});
+	const [room, setRoom] = useState<Room>();
 	const [contextRef, setContextRef] = useState();
 	const [socket, setSocket] = useState<WebSocket>();
 	const [recievedStroke, setRecievedStroke] = useState({});
@@ -47,41 +30,41 @@ function Host() {
 		// What about if my colour / thickness is different?
 		const message = JSON.parse(event.data);
 		const messageHeader = message.action;
-		if (message.response && message.response == "roomcode") {
-			roomCode = message.code;
-		}
 		if (messageHeader === "Update") {
 			setRecievedStroke(message.strokeToDraw);
 		}
 
 	}
 
-	useLayoutEffect(() => {
-		getRoomData();
-		const newSocket = new WebSocket('ws://' + window.location.hostname + ':2210', 'echo-protocol');
-		setSocket(newSocket);
+	useEffect(() => {
+		fetch("http://localhost:2211/create")
+			.then(response => response.json())
+			.then(incRoom => {
+				setRoom(incRoom);
+				let newWebsocket = new WebSocket('ws://' + window.location.hostname + `:${incRoom.socketNumber}`, 'echo-protocol');
+				newWebsocket.onopen = () => {
+					console.log('WebSocket connection established');
 
-		newSocket.onopen = () => {
-			console.log('WebSocket connection established');
+					newWebsocket.send(JSON.stringify({ request: "roomcode" }));
+				};
 
-			newSocket.send(JSON.stringify({ request: "roomcode" }));
-		};
+				newWebsocket.onmessage = socketOnMessage;
 
-		newSocket.onmessage = socketOnMessage;
+				newWebsocket.onclose = () => {
+					console.log('WebSocket connection closed');
+				};
 
-		newSocket.onclose = () => {
-			console.log('WebSocket connection closed');
-		};
-
-		newSocket.onerror = (error) => {
-			console.error('WebSocket error:', error);
-		};
-
-		return () => {
-			newSocket.close();
-		};
-
+				newWebsocket.onerror = (error) => {
+					console.error('WebSocket error:', error);
+				};
+				setSocket(newWebsocket);
+				return () => {
+					newWebsocket.close();
+				};
+				
+			})
 	}, []);
+
 
 
 	return (<>
@@ -90,8 +73,8 @@ function Host() {
 			updateContextRef={setContextRef}
 			recievedStroke={recievedStroke}
 		/>
-
-		<RoomCodeText text={roomCode} />
+		{room && <RoomCodeText text={room.roomcode} />}
+		{room && <div>{room.roomcode} {room.socketNumber}</div>}
 	</>)
 }
 

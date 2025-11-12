@@ -1,8 +1,9 @@
-import React, { useState, useLayoutEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import './style.css'
 import Canvas from './assets/Canvas.tsx';
 import type { Stroke } from './assets/Canvas.tsx';
+import type { Room } from '../../server/IWDB.ts';
 import PaintColourButton from './assets/PaintColourButton.tsx';
 import BrushWidthSlider from './assets/BrushWidthSlider.tsx';
 import BackgroundColourButton from './assets/BackgroundColourButton.tsx';
@@ -13,10 +14,10 @@ import RoomCodeText from './assets/RoomCodeText.tsx';
 
 function Participant() {
 
-    const { code } = useParams();
-    const roomCode = decodeURIComponent(code);
-
-    const [lineInfo, setLineInfo] = useState({});
+    //const { code } = useParams();
+    //const roomCode = decodeURIComponent(code);
+    const [room, setRoom] = useState<Room>();
+    //const [lineInfo, setLineInfo] = useState({});
     const [contextRef, setContextRef] = useState();
     const [socket, setSocket] = useState<WebSocket>();
     const [recievedStroke, setRecievedStroke] = useState({});
@@ -42,7 +43,7 @@ function Participant() {
 		}
     }
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const newSocket = new WebSocket('ws://' + window.location.hostname + ':2210', 'echo-protocol');
         setSocket(newSocket);
 

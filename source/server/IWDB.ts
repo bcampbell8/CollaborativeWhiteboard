@@ -118,29 +118,6 @@ export async function JoinRequest(db: Db, roomCode: string): Promise<Room | null
 
 
 
-export async function CreateDatabase(): Promise<Db>{
-    const client = new MongoClient(url);
-
-    //Awaits connection from mongo client instance
-    await client.connect();
-    console.log("Database connected");
-
-    //Create database and collction on client 
-    try{
-        const db = client.db(dbName);
-        return db;
-    }
-    catch(err){
-        console.log(err);
-    }
-    finally{
-        await client.close();
-        console.log("Connection closed");
-    } 
-
-}
-
-
 
 //note to self: employ response codes for calls to express api
 
