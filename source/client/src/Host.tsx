@@ -3,17 +3,29 @@ import { useParams } from 'react-router-dom';
 import './style.css'
 import Canvas, { type Stroke } from './assets/Canvas.tsx';
 import RoomCodeText from './assets/RoomCodeText.tsx';
+import type {Room} from '../../server/IWDB.ts'
 
 
 
 function Host() {
 
-	function getRoomCode() {
-		const code = "abcdef";// fetch("http://" + window.location.hostname + ":2211/hostroom");
-		return code;
+	async function getRoomData() {
+		try{
+			const response = await fetch("http://localhost:2211/create");
+			if (!response.ok){
+				throw new Error(`Error retrieving room creation data: ${response.status}`);
+			}
+			const data = response.json();
+			console.log(data);
+			return data;
+		} catch (error){
+			console.error(error);
+			return null;
+		}
 	}
 	let roomCode = "";
 
+	const [room, setRoom] = useState();
 	const [lineInfo, setLineInfo] = useState({});
 	const [contextRef, setContextRef] = useState();
 	const [socket, setSocket] = useState<WebSocket>();
@@ -45,6 +57,7 @@ function Host() {
 	}
 
 	useLayoutEffect(() => {
+		getRoomData();
 		const newSocket = new WebSocket('ws://' + window.location.hostname + ':2210', 'echo-protocol');
 		setSocket(newSocket);
 

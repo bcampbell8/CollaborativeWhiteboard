@@ -1,12 +1,41 @@
 import express from 'express';
 import {WebSocket, WebSocketServer} from 'ws';
-
+import {JoinRequest, UpdateHistory, CloseRoom, CreateRoomEntry, type Room} from './IWDB.ts'
+import {Db, MongoClient} from 'mongodb';
+import cors from 'cors';
 
 const app = express();
+app.use(cors());
+
+const mongoUrl = 'mongodb://localhost:27017';
+const client = new MongoClient(mongoUrl)
+await client.connect();
+let IWDB: Db;
+console.log("Db client connected");
+try{
+    IWDB = client.db("Rooms");
+    console.log("Connection to IWDB database successful");
+    const collection = IWDB.collection<Room>('Rooms');
+    collection.drop();
+    console.log("Rooms table reset.");
+}
+catch(err){
+    console.log(err);
+}
+
+
 
 let wsport = 2210;
 const wss = new WebSocketServer({port: wsport});
 console.log(`WS server is listening on port ${wsport}`);
+
+//Seed room code generator
+let roomcodeGen: number = 0;
+
+//Seed socket generator
+let socketGen: number = 7000;
+
+//Potentially make an array that houses all open websockets?
 
 wss.on('connection', (ws) => {
     console.log("New client connected to server");
@@ -51,6 +80,16 @@ app.get("/verifyroom", (request, response) => {
 	// check if room in db
 	
 	response.send("true");
+});
+
+app.get("/create", async (req, res) =>{
+    console.log("Incoming request on /create!");
+    roomcodeGen++;
+    socketGen++;
+    let room = await CreateRoomEntry(IWDB, roomcodeGen, socketGen);
+    res.send(room).status(200);
+    const wss = new WebSocketServer({port: socketGen});
+    console.log(`New room open on:${socketGen} `);
 });
 
 const httpport = 2211;
