@@ -44,8 +44,6 @@ function Host() {
 				let newWebsocket = new WebSocket('ws://' + window.location.hostname + `:${incRoom.socketNumber}`, 'echo-protocol');
 				newWebsocket.onopen = () => {
 					console.log('WebSocket connection established');
-
-					newWebsocket.send(JSON.stringify({ request: "roomcode" }));
 				};
 
 				newWebsocket.onmessage = socketOnMessage;
@@ -62,7 +60,7 @@ function Host() {
 					newWebsocket.close();
 				};
 				
-			})
+			});
 	}, []);
 
 

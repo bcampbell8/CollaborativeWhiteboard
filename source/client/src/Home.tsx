@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { ReactFormState } from 'react-dom/client';
 import { Link } from 'react-router-dom';
 
 
@@ -14,8 +15,10 @@ function Home() {
 		});
 	};
 	
-	async function handleSubmit(e) {
-		e.preventDefault();
+	async function handleSubmit(e: FormData) {
+		//e.preventDefault();
+		const roomFormcode = e.get("code");
+		console.log(roomFormcode);
 		// console.log(JSON.stringify(formdata));
 		
 		// let roomExists = await fetch("http://" + window.location.hostname + ":2211/verifyroom");
@@ -23,14 +26,26 @@ function Home() {
 			// return false; // idk what to do rn to indicate to the user that a room does not exist
 		// }
 		
-		window.location.href = `/participate/${encodeURIComponent(formdata.code)}`;
+		const response = await fetch("http://" + window.location.hostname + ":2211/findroom",{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({roomcode: `${roomFormcode}`})
+		});
+		const roomExists = await response.json();
+
+		if (roomExists){
+			window.location.href = `/participate/${encodeURIComponent(formdata.code)}`;
+		}
+		
 	};
 	
 	return (<>
 		<nav>
 			<Link to={"/host"}>Host a room</Link>
 			<p />
-			<form onSubmit={handleSubmit}>
+			<form action={handleSubmit}>
 				<input
 					type="text"
 					name="code"

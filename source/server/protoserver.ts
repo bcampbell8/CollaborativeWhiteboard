@@ -6,6 +6,7 @@ import cors from 'cors';
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 const mongoUrl = 'mongodb://localhost:27017';
 const client = new MongoClient(mongoUrl)
@@ -90,6 +91,28 @@ app.get("/create", async (req, res) =>{
     res.send(room).status(200);
     const wss = new WebSocketServer({port: socketGen});
     console.log(`New room open on:${socketGen} `);
+});
+
+app.post("/join", async (req, res) => {
+    console.log("Incoming join request on /join!");
+    let roomcode = req.body.roomcode;
+    console.log(roomcode);
+    let room = await JoinRequest(IWDB, roomcode);
+    res.send(room).status(200);
+});
+
+app.post("/findroom", async (req, res) =>{
+    console.log("Incoming find request on /findroom! " + req.body);
+    let roomcode = req.body.roomcode;
+    let roomExists = false;
+    let room = await JoinRequest(IWDB, roomcode);
+    if (room){
+        roomExists = true;
+        res.send(roomExists).status(200);
+    }
+    else{
+        res.status(404).send(roomExists);
+    }
 });
 
 const httpport = 2211;

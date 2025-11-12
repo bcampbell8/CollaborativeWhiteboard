@@ -37,13 +37,42 @@ function Participant() {
         // This is probably quite scuffed and there needs to be more done such as updating stroke history etc.
         //What about if my colour / thickness is different?
         const message = JSON.parse(event.data);
-		const messageHeader = message.action;
-		if (messageHeader === "Update"){
-			setRecievedStroke(message.strokeToDraw);
-		}
+        const messageHeader = message.action;
+        if (messageHeader === "Update") {
+            setRecievedStroke(message.strokeToDraw);
+        }
     }
 
     useEffect(() => {
+        let roomcode = window.location.pathname.split('/')[2];
+        fetch("http://" + window.location.hostname + ":2211/join", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ roomcode: roomcode })
+        })
+            .then(response => response.json())
+            .then(incRoom => {
+                setRoom(incRoom);
+                let newWebsocket = new WebSocket('ws://' + window.location.hostname + `:${incRoom.socketNumber}`, 'echo-protocol');
+                newWebsocket.onopen = () => {
+                    console.log('WebSocket connection established');
+                };
+
+                newWebsocket.onmessage = socketOnMessage;
+
+                newWebsocket.onclose = () => {
+                    console.log('WebSocket connection closed');
+                };
+
+                newWebsocket.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                };
+                setSocket(newWebsocket);
+                return () => {
+                    newWebsocket.close();
+                };
+            });
+        /*
         const newSocket = new WebSocket('ws://' + window.location.hostname + ':2210', 'echo-protocol');
         setSocket(newSocket);
 
@@ -64,6 +93,7 @@ function Participant() {
         return () => {
             newSocket.close();
         };
+        */
 
     }, []);
 
@@ -75,7 +105,7 @@ function Participant() {
             recievedStroke={recievedStroke}
         />
 
-        <RoomCodeText text={roomCode} />
+        {room && <RoomCodeText text={room.roomcode} />}
     </>)
 }
 
