@@ -1,4 +1,4 @@
-import {MongoClient} from 'mongodb';
+import { MongoClient } from 'mongodb';
 
 //probably will need to change the url at some point from localhost?
 const url = 'mongodb://localhost:27017';
@@ -9,7 +9,7 @@ const dbName = 'IWDB';
 const collectionName = 'Rooms';
 //const roomsSchema = new mongo
 
-async function CreateDatabaseAndCollection(){
+async function CreateDatabaseAndCollection() {
     const client = new MongoClient(url);
 
     //Awaits connection from mongo client instance?
@@ -17,21 +17,18 @@ async function CreateDatabaseAndCollection(){
     console.log("Backend connected");
 
     //Create database and collction on client 
-    try{
+    try {
         const db = client.db(dbName);
         await db.createCollection(collectionName, );
-    }
-    catch(err){
+    } catch(err) {
         console.log(err);
-    }
-    finally{
+    } finally {
         await client.close();
         console.log("Connection closed");
-    } 
-
+    }
 }
 
-async function main(){
+async function main() {
     CreateDatabaseAndCollection();
 
 }
@@ -57,12 +54,6 @@ Next, implement handling of requests (CRUD)
 - Undo will have its own fun issues to address :)
 - Might need to record participant IDs to associate with stroke
 When server is closed, truncate the schema
-
-
-
-
-
-
 
 */
 

@@ -1,11 +1,11 @@
 import express from 'express';
-import {WebSocket, WebSocketServer} from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
 
 
 const app = express();
 
 let wsport = 2210;
-const wss = new WebSocketServer({port: wsport});
+const wss = new WebSocketServer({ port: wsport });
 console.log(`WS server is listening on port ${wsport}`);
 
 wss.on('connection', (ws) => {
