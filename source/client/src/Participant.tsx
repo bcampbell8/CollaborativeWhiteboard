@@ -33,8 +33,6 @@ function Participant() {
     }
 
     function socketOnMessage(event) {
-        // This is probably quite scuffed and there needs to be more done such as updating stroke history etc.
-        //What about if my colour / thickness is different?
         const message = JSON.parse(event.data);
 		const messageHeader = message.action;
 		if (messageHeader === "Update"){

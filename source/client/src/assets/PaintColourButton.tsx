@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 export type PaintColourButtonProps = {
 	initialBrushColour: string
 	updateBrushColourFunction: (colour: string) => void
+	style
 }
 
 function PaintColourButton(props: PaintColourButtonProps) {
@@ -16,12 +17,7 @@ function PaintColourButton(props: PaintColourButtonProps) {
     return (
     <>
 		<input type="color" id="brushColourInput" value={colour}
-			style={{
-				position: "absolute",
-				top: "45px",
-				left: "10px",
-				zIndex: 1
-			}}
+			style={props.style}
 			onChange={e => onColourChange(e.target.value)}
 		/>
     </>

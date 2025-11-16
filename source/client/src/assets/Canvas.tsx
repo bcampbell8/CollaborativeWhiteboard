@@ -1,7 +1,7 @@
 import React, { useState, useLayoutEffect, useRef, type PointerEvent } from 'react';
 import MoveCanvasToggle from './MoveCanvasToggle.tsx';
 import PaintColourButton from './PaintColourButton.tsx';
-import BrushWidthSlider from './BrushWidthSlider.tsx';
+import BrushWidthSliderHider from './BrushWidthSliderHider.tsx';
 import BackgroundColourButton from './BackgroundColourButton.tsx';
 import EraserButton from './EraserButton.tsx';
 
@@ -15,6 +15,7 @@ const startingBrushWidth = 5;
 const startingBackgroundColour = "#F0F0F0";
 const startingEraserState = false;
 const startingMovingCanvasState = false;
+const startingSliderVisibility = false;
 
 
 export type Stroke = {
@@ -48,6 +49,7 @@ export default function Canvas(props: CanvasProps) {
 	const [globalBackgroundColour, updateBackgroundColour] = useState(startingBackgroundColour);
 	const [globalEraserState, updateEraserState] = useState(startingEraserState);
 	const [movingCanvasState, updateMovingCanvasState] = useState(startingMovingCanvasState);
+	const [sliderVisibility, setSliderVisibility] = useState(startingSliderVisibility);
 	
 	
     const [isPointerDown, setIsPointerDown] = useState(false);
@@ -217,31 +219,85 @@ export default function Canvas(props: CanvasProps) {
 	const updateErasing = () => {
 		updateEraserState();
 	};
+	
+	const sidebarDistanceFromLeft = 5;
+	const sidebarDistanceFromTop = 5;
+	
+	const checkboxWidth = 32;
+	const checkboxHeight = 32;
+	
+	const colourSelectorOffset = 4;
     
     return (
     <>
 		<MoveCanvasToggle
 			updateMovingCanvasFunction={updateMovingCanvasState}
+			style={{
+				position: "absolute",
+				top: sidebarDistanceFromTop + "px",
+				left: sidebarDistanceFromLeft + "px",
+				zIndex: 5,
+				width: checkboxWidth,
+				height: checkboxHeight
+			}}
 		/>
 		
-		<BrushWidthSlider
+		<BrushWidthSliderHider
+			updateSliderVisibleFunction={setSliderVisibility}
 			initialWidth={globalBrushWidth}
 			updateBrushWidthFunction={updateBrushWidth}
+			sidebarDistanceFromTop={sidebarDistanceFromTop}
+			sidebarDistanceFromLeft={sidebarDistanceFromLeft}
+			checkboxHeight={checkboxHeight}
+			checkboxWidth={checkboxWidth}
+			style={{
+				position: "absolute",
+				top: (sidebarDistanceFromTop + checkboxHeight) + "px",
+				left: sidebarDistanceFromLeft + "px",
+				zIndex: 4,
+				width: checkboxWidth,
+				height: checkboxHeight,
+				background: "url('unchecked.png') no-repeat left center"
+			}}
 		/>
 		
 		<PaintColourButton
 			initialBrushColour={globalBrushColour}
 			updateBrushColourFunction={updateBrushColour}
+			style={{
+				position: "absolute",
+				top: (sidebarDistanceFromTop + checkboxHeight * 2 + colourSelectorOffset) + "px",
+				left: (sidebarDistanceFromLeft + colourSelectorOffset) + "px",
+				zIndex: 3,
+				width: checkboxWidth,
+				height: checkboxHeight,
+			}}
 		/>
 		
 		<BackgroundColourButton
 			initialBackgroundColour={globalBackgroundColour}
 			updateBackgroundColourFunction={updateBackgroundColour}
+			style={{
+				position: "absolute",
+				top: (sidebarDistanceFromTop + checkboxHeight * 3 + colourSelectorOffset) + "px",
+				left: (sidebarDistanceFromLeft + colourSelectorOffset) + "px",
+				zIndex: 3,
+				width: checkboxWidth,
+				height: checkboxHeight,
+			}}
 		/>
 		
 		<EraserButton
 			initialEraserState={globalEraserState}
 			updateEraserStateFunction={updateErasing}
+			style={{
+				position: "absolute",
+				top: (sidebarDistanceFromTop + checkboxHeight * 4) + "px",
+				left: sidebarDistanceFromLeft + "px",
+				zIndex: 2,
+				width: checkboxWidth,
+				height: checkboxHeight
+			}}
 		/>
 		
 		
@@ -251,7 +307,8 @@ export default function Canvas(props: CanvasProps) {
 			style={{
 				width: "100%",
 				height: "95%",
-				background: props.backgroundColour
+				background: globalBackgroundColour,
+				zIndex: 0
 			}}
 			onPointerDown={handlePointerDown}
 			onPointerUp={handlePointerUp}

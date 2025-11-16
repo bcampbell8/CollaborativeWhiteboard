@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 type BackgroundColourButtonProps = {
 	initialBackgroundColour: string
 	updateBackgroundColourFunction: (colour: string) => void
+	style
 }
 
 function BackgroundColourButton(props: BackgroundColourButtonProps) {
@@ -16,12 +17,7 @@ function BackgroundColourButton(props: BackgroundColourButtonProps) {
 	
 	return (<>
 		<input type="color" value={colour} id="backgroundColourInput"
-			style={{
-				position: "absolute",
-				top: "85px",
-				left: "10px",
-				zIndex: 1
-			}}
+			style={props.style}
 			onChange={e => onColourChange(e.target.value)}
 		/>
     </>)

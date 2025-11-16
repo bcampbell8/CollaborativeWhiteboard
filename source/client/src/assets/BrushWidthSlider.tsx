@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 export type BrushWidthButtonProps = {
 	initialWidth: string
 	updateBrushWidthFunction: (width: number) => void
+	style
 }
 
 export function BrushWidthSlider(props: BrushWidthButtonProps) {
@@ -16,12 +17,7 @@ export function BrushWidthSlider(props: BrushWidthButtonProps) {
     return (
     <>
 		<input type="range" min="1" max="50" value={width} id="brushWidthInput"
-			style={{
-				position: "absolute",
-				top: "10px",
-				left: "10px",
-				zIndex: 1
-			}}
+			style={props.style}
 			onChange={e => onWidthChange(e.target.value)}
 		/>
     </>
