@@ -7,7 +7,7 @@ import EraserButton from './EraserButton.tsx';
 
 export type CanvasProps = {
 	sendStroke: (stroke: Stroke) => void
-	recievedStroke: Stroke
+	recievedStroke: Array<Stroke> // Receives an array of strokes to redraw the canvas.
 }
 
 const startingBrushColour = "#000000";
@@ -62,13 +62,13 @@ export default function Canvas(props: CanvasProps) {
 	
 	function drawStroke(stroke: Stroke) {
 		// console.log("drawing: " + JSON.stringify(stroke));
-		if (JSON.stringify(stroke) == "{}") {
-			return;
-		}
+		// if (JSON.stringify(stroke) == "{}") {
+		// 	return;
+		// }
+		// Check if context has been rendered
 		if (contextRef.current) {
-			// console.log("incoming:");
-			// console.log(stroke);
-			
+
+			//Loop through segments of the stroke being drawn, and draw each segment.
 			for (let segment of stroke.segments) {
 				contextRef.current.strokeStyle = stroke.strokeColour;
 				contextRef.current.lineWidth = stroke.strokeWidth;
@@ -94,9 +94,18 @@ export default function Canvas(props: CanvasProps) {
 		if (!props.recievedStroke){
 			return;
 		}
-		strokeHistory.push(props.recievedStroke);
+
+		// If a new stroke has been received, update the stroke history
+		if(props.recievedStroke && props.recievedStroke.length > 0) {
+			console.log(props.recievedStroke)
+			strokeHistory.push(...props.recievedStroke);
+		}
+		// Update the stroke history, then redraw the canvas.
 		setStrokeHistory(updatedStrokeHistory);
-		drawStroke(props.recievedStroke);
+		console.log(props.recievedStroke);
+		strokeHistory.map(e => drawStroke(e))
+		//props.recievedStroke.map(e => drawStroke(e));
+		//drawStroke(props.recievedStroke);
 
         //Need to include the props here in dependency array
 	}, [props.recievedStroke]);
