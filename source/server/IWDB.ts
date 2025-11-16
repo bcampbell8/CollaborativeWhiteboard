@@ -52,10 +52,12 @@ export async function UpdateHistory(db: Db, roomCode:string, incomingStroke: Str
     if (history === null){
         return null
     }
-    history.push(incomingStroke);
+    
+    history.strokeHistory.push(incomingStroke);
+    console.log(history);
     collection.updateOne({roomcode: `${roomCode}`},{
         $set: {
-            strokeHistory: history
+            strokeHistory: history.strokeHistory
         }
     });
     return history;
@@ -91,6 +93,7 @@ async function RetrieveRoomHistory(db: Db, roomCode: string): Promise<Stroke[] |
         if (history === null){
              throw new Error("Room history not found."); 
         }
+        console.log("before database serves: "+history);
         return history;
     } catch(error){
         console.log(error);

@@ -12,13 +12,14 @@ function Host() {
 	const [room, setRoom] = useState<Room>();
 	const [contextRef, setContextRef] = useState();
 	const [socket, setSocket] = useState<WebSocket>();
-	const [recievedStroke, setRecievedStroke] = useState({});
+	const [recievedStroke, setRecievedStroke] = useState([]);
 
 
 	const sendStroke = (stroke: Stroke) => {
 		if (stroke && socket && socket.readyState === WebSocket.OPEN) {
 			let packet = {
 				action: "Update",
+				room: room,
 				strokeToDraw: stroke
 			}
 			socket.send(JSON.stringify(packet));
@@ -31,7 +32,7 @@ function Host() {
 		const message = JSON.parse(event.data);
 		const messageHeader = message.action;
 		if (messageHeader === "Update") {
-			setRecievedStroke(message.strokeToDraw);
+			setRecievedStroke([message.strokeToDraw]);
 		}
 
 	}
@@ -71,8 +72,7 @@ function Host() {
 			updateContextRef={setContextRef}
 			recievedStroke={recievedStroke}
 		/>
-		{room && <RoomCodeText text={room.roomcode} />}
-		{room && <div>{room.roomcode} {room.socketNumber}</div>}
+		{room && <RoomCodeText text={`roomcode: ${room.roomcode} port: ${room.socketNumber} `} />}
 	</>)
 }
 
