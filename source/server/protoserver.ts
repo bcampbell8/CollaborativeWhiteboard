@@ -1,18 +1,16 @@
 import express from 'express';
 import { WebSocket, WebSocketServer } from 'ws';
-<<<<<<< HEAD
-
-=======
-import { JoinRequest, UpdateHistory, CloseRoom, CreateRoomEntry, type Room } from './IWDB.ts'
+import { MongoDbServerUrl, type Room } from './IWDB.ts'
+import { CreateRoomEntry, JoinRequest, UpdateHistory, CloseRoom } from './IWDB.ts'
 import { Db, MongoClient } from 'mongodb';
 import cors from 'cors';
->>>>>>> 92002e28717b42bee0dc13d4541bacb239be4a89
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const mongoUrl = 'mongodb://localhost:27017';
+const mongoUrl = MongoDbServerUrl;
 const client = new MongoClient(mongoUrl)
 await client.connect();
 let IWDB: Db;
@@ -23,8 +21,7 @@ try {
     const collection = IWDB.collection<Room>('Rooms');
     collection.drop();
     console.log("Rooms table reset.");
-}
-catch (err) {
+} catch (err) {
     console.log(err);
 }
 

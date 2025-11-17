@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
-import './style.css'
 import Canvas from './assets/Canvas.tsx';
 import type { Stroke } from './assets/Canvas.tsx';
 import type { Room } from '../../server/IWDB.ts';

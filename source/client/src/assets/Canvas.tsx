@@ -141,10 +141,6 @@ export default function Canvas(props: CanvasProps) {
 		} else {
 			setPreviousX(e.clientX);
 			setPreviousY(e.clientY);
-			// console.log("e.client: " + [e.clientX, e.clientY]);
-			// console.log("diff: " + [diffX, diffY]);
-			// console.log("prev: " + [previousX, previousY]);
-			// console.log("abs canvas loc: " + absoluteCanvasLocation);
 		}
     }
 
@@ -216,11 +212,6 @@ export default function Canvas(props: CanvasProps) {
 			setStrokeHistory(updatedStrokeHistory);
 			// console.log(strokeHistory);
 			props.sendStroke(stroke);
-		} else {
-			// console.log("diff: " + [diffX, diffY]);
-			// console.log("prev: " + [previousX, previousY]);
-			// console.log("p+d-ecl should be 0: " + [previousX + diffX - e.clientX, previousY + diffY - e.clientY]);
-			// console.log("abs canvas loc: " + absoluteCanvasLocation);
 		}
     }
 	

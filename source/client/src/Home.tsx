@@ -42,9 +42,10 @@ function Home() {
 	};
 	
 	return (<>
-		<nav>
+		<nav style={{
+			justifyContent: "center"
+		}}>
 			<Link to={"/host"}>Host a room</Link>
-			<p />
 			<form action={handleSubmit}>
 				<input
 					type="text"
