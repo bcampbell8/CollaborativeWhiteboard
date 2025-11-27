@@ -21,8 +21,8 @@ try {
     const collection = IWDB.collection<Room>('Rooms');
     collection.drop();
     console.log("Rooms table reset.");
-} catch (err) {
-    console.log(err);
+} catch (error) {
+    console.log(error);
 }
 
 

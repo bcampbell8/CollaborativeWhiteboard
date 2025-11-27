@@ -306,7 +306,7 @@ export default function Canvas(props: CanvasProps) {
 			height={window.innerHeight}
 			style={{
 				width: "100%",
-				height: "95%",
+				height: "100%",
 				background: globalBackgroundColour,
 				zIndex: 0
 			}}
