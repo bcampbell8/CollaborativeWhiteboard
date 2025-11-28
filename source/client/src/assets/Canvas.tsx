@@ -62,14 +62,25 @@ export default function Canvas(props: CanvasProps) {
 	
 	function drawStroke(stroke: Stroke) {
 		// console.log("drawing: " + JSON.stringify(stroke));
-		// if (JSON.stringify(stroke) == "{}") {
-		// 	return;
-		// }
+		
 		// Check if context has been rendered
 		if (contextRef.current) {
 
 			//Loop through segments of the stroke being drawn, and draw each segment.
 			for (let segment of stroke.segments) {
+				// segment is [X, Y]
+				let screenBounds = canvasRef.current.getBoundingClientRect();
+				if (segment.start[0] - absoluteCanvasLocation[0] < screenBounds.left ||
+					segment.start[0] - absoluteCanvasLocation[0] > screenBounds.right ||
+					segment.start[1] - absoluteCanvasLocation[1] < screenBounds.top ||
+					segment.start[1] - absoluteCanvasLocation[1] > screenBounds.bottom ||
+					segment.finish[0] - absoluteCanvasLocation[0] < screenBounds.left ||
+					segment.finish[0] - absoluteCanvasLocation[0] > screenBounds.right ||
+					segment.finish[1] - absoluteCanvasLocation[1] < screenBounds.top ||
+					segment.finish[1] - absoluteCanvasLocation[1] > screenBounds.bottom
+				) {
+					continue;
+				}
 				contextRef.current.strokeStyle = stroke.strokeColour;
 				contextRef.current.lineWidth = stroke.strokeWidth;
 				contextRef.current.beginPath();
@@ -102,7 +113,7 @@ export default function Canvas(props: CanvasProps) {
 		}
 		// Update the stroke history, then redraw the canvas.
 		setStrokeHistory(updatedStrokeHistory);
-		console.log(props.recievedStroke);
+		// console.log(props.recievedStroke);
 		strokeHistory.map(e => drawStroke(e))
 		//props.recievedStroke.map(e => drawStroke(e));
 		//drawStroke(props.recievedStroke);

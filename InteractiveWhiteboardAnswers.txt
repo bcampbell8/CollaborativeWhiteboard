@@ -7,8 +7,10 @@ A question answered with "done" means it was written directly into the word docu
 A question mark next to a question number indicates the question is mostly done (just requires
 screenshots be taken or minor adjustments be made)
 
-Part 2		: 10, 12, 13
-Part 3 (31)	: 
+Part 2		: 10?, 12? - answers are there, not sure how complete they are
+
+Part 3 (31)	: 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14, 3.15, 3.16, 3.17, 3.18, 3.19
+		  3.20, 3.21, 3.22, 3.23, 3.24, 3.25, 3.26, 3.28
 Part 4 (4)	: 1?, 2?, 3, 4
 Part 5 (2)	: 1?, 2?
 
@@ -229,7 +231,37 @@ which can be fixed fairly quickly.
 2.10
 line segment system and how its communicated over the network, the infinite canvas thing
 
+sequenceDiagram
+    participant ViteServer
+    participant WsServer
+    participant Host
+    participant Participants
+    Host->>+ViteServer: Webpage request
+    ViteServer->>-Host: Host Page
+
+    Host->>+WsServer: Open room request
+    WsServer-)Host: Room has been opened
+
+    Participants->>+ViteServer: Webpage request
+    ViteServer->>-Participants: Participation page
+
+    Participants->>+WsServer: Join room
+
+    Participants-)WsServer: New strokes
+    WsServer-)Participants: Strokes drawn by others
+    Host-)WsServer: New strokes
+    WsServer-)Host: Strokes drawn by others
+
+    WsServer->>-Participants: Leave room
+
+    Host-)WsServer: Close room request
+    WsServer->>-Host: Room has been closed
+
 ??? _____________
+
+[ss: 2.10 - vite ws host participant sequence diagram]
+[ss: 2.10 - main screen on mobile]
+[ss: 2.10 - main screen on desktop]
 
 2.11
 The project aims to be lightweight and usable, even on older devices and devices with lower output
@@ -241,8 +273,36 @@ lower battery usage compared to a more hardware intensive application.
 github issues for test cases
 test cases for typical scenarios
 
+Manual UI tests:
+. draw a line on the canvas
+. create a room using the host link
+. join a room using the participate link
+. draw a line and see if it appears on another host
+. shift the canvas around to check local and remote originating lines move correctly
+Integration tests:
+. test adding a record to the strokes collection in the database
+Non-functional tests:
+. test drawing loads of lines on a canvas and checking the system resource usage for abnormalities
+
+
 2.13
 document what has been discussed before, and how we're going to tackle these things
+
+----------------- begin email -----------------
+Hi [Supervisor],
+
+The application is in a stable, usable state, but is missing major test coverage and styling. As
+I said, it works and can be deployed, but requires more work. I also realise the room IDs are
+predictable and easy to guess, but that should be a fairly quick fix.
+
+I've attached the app development report below.
+
+
+Thanks,
+Dan :)
+
+27.11.25
+-----------------  end email  -----------------
 
 
 
@@ -261,6 +321,12 @@ Subjectively, the IDE could be any text editor, and is therefore not a necessary
 3.3
 [ss: use of automation facilities (vite build)]
 
+3.4
+
+
+3.5
+
+
 3.6
 works, but janky
 
@@ -271,17 +337,46 @@ room code generator
 change stroke history array into circular buffer
 
 3.16
-data is structured in a way that does not require efficient sorting or searchings
-infinite canvas has search and sort through filtering (only certain lines are drawn to canvas)
+Searching and sorting the application is achieved through filtering line segments based on whether
+they're visible on-screen or not. Due to the infinite canvas feature, line segments are frequently
+not all on-screen, and therefore do not need to be drawn. However, this filtering does not require
+efficient sorting or searching, as every line segment has to be drawn or checked anyway.
 
 3.17
-why is a sort or search not necessary? explain
+The data used in the application does not require sorting or searching, as it becomes sorted on definition.
+As the data is created, it is sorted by "time of creation", which is the line segments as the stroke is
+drawn. Searching is not necessary as data is grouped as it's created and individual data points are never
+isolated. While drawing a single line segment is required fairly often, it's only drawn after the line segment
+that was created directly before it and before the line segment that was created directly after it.
 
 3.23
 no login system, so not really applicable
 
-2.24
+3.24
 save button to save current view as png
+
+3.25
+
+
+3.26
+
+
+3.27
+[ss: 3.27 - as close to IDE debugging as ill get]
+
+3.28
+
+
+3.29
+[ss: 3.29 - optimisation 1 - remove method bc useless]
+[ss: 3.29 - optimisation 2 - deleted these files to make maintenance easier]
+[ss: 3.29 - optimisation 3 - recieved offscreen strokes are not drawn]
+
+3.30
+[ss: 3.30 - jsdoc comment]
+
+3.31
+[ss: 3.31 - multiple jsdoc comments]
 
 
 part 4: testing and stuff
