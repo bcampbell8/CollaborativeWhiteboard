@@ -9,8 +9,7 @@ screenshots be taken or minor adjustments be made)
 
 Part 2		: 10?, 12? - answers are there, not sure how complete they are
 
-Part 3 (31)	: 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14, 3.15, 3.16, 3.17, 3.18, 3.19
-		  3.20, 3.21, 3.22, 3.23, 3.24, 3.25, 3.26, 3.28
+Part 3 (31)	: 3.4, 3.5, 3.7, 3.8, 3.12, 3.15, 3.24, 3.28
 Part 4 (4)	: 1?, 2?, 3, 4
 Part 5 (2)	: 1?, 2?
 
@@ -158,7 +157,7 @@ a root directory "/". To request top level javascript content, the route would p
 "/scripts.js", compared to a subpage in the Products page: "/Products/Teapots". The version is
 almost always "HTTP/1.1" for both request and response. Headers provide more information about the
 body, for example "Content-Type: application/json". A request does not always have a body, whereas
-a response pretty much always has a body.
+a response always has a body unless the 204 No Content response code is sent.
 
 
 1.17
@@ -328,13 +327,47 @@ Subjectively, the IDE could be any text editor, and is therefore not a necessary
 
 
 3.6
-works, but janky
+The auto resizing of the canvas when the device window changes size/shape works automatically through
+react, but it doesn't work immediately - it requires the user to interact with it somehow before it
+updates.
+
+3.7
+
+
+3.8
+
+
+3.9
+[ss: 3.9 - async operation]
+
+3.10
+[ss: 3.10 - third party library imports]
+The app makes liberal use of third party libraries, but the main few are express, mongodb, and react.
 
 3.11
-room code generator
+The room code generator is not necessarily a hashing function, but it does produce a uniformly
+distributed output which is somewhat random
+[ss: 3.11 - room code generator]
 
 3.12
 change stroke history array into circular buffer
+
+The system works by storing lines in an array in memory, which works, but after a few people have
+drawn a few long lines, can become a serious performance issue.
+
+3.13
+There are a number of these, but the LineSegment type is an object which contains nullable Point
+objects, which are each an array of numbers with length 2.
+[ss: 3.14 - coordinates 2d ds]
+
+3.14
+Every coordinate space in the application is an array of length 2. These values are used to track the
+difference between where the global (0, 0) is, and where the client is (measured by where the top left
+corner is as an origin for on-screen coordinates)
+[ss: 3.14 - coordinates 2d ds]
+
+3.15 application doesn't use any...
+
 
 3.16
 Searching and sorting the application is achieved through filtering line segments based on whether
@@ -349,17 +382,41 @@ drawn. Searching is not necessary as data is grouped as it's created and individ
 isolated. While drawing a single line segment is required fairly often, it's only drawn after the line segment
 that was created directly before it and before the line segment that was created directly after it.
 
+3.18 the HTTP methods provide information about whether rooms exist or not
+[ss: 3.20 - protoserver implements POST method]
+
+3.19
+Updates between connected clients and server/client is done through websockets, and triggered by the
+handlePointerUp function in the Canvas 
+[ss: 3.19 - handlePointerUp canvas tsx]
+
+3.20
+The application does not implement PUT, PATCH, or DELETE methods, as updates and deletes of things are
+either done using POST requests, or handled through websockets.
+[ss: 3.20 - protoserver implements POST method]
+
+3.21
+[ss: 3.21 - use of HTTP codes]
+
+3.22
+The application does not implement the OPTIONS HTTP method, but does allow CORS, as the Vite server handles
+serving the webpages, while protoserver.ts handles using HTTP GET and POST requests to verify and connect
+clients to rooms.
+
 3.23
-no login system, so not really applicable
+The application does not necessarily store valuable information - importantly, it doesn't have a login system,
+meaning there is no chance any user accounts could be compromised (since there are none).
 
 3.24
 save button to save current view as png
 
 3.25
-
+Strokes stored in object form in memory locally. The storage is of the form
+{ strokeDisplacement: [number, number], strokeColour: string, strokeWidth: number, segments: Array<LineSegment> }
+(key-value pairs)
 
 3.26
-
+[ss: 3.26 - browser debugging]
 
 3.27
 [ss: 3.27 - as close to IDE debugging as ill get]

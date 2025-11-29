@@ -4,6 +4,7 @@ import PaintColourButton from './PaintColourButton.tsx';
 import BrushWidthSliderHider from './BrushWidthSliderHider.tsx';
 import BackgroundColourButton from './BackgroundColourButton.tsx';
 import EraserButton from './EraserButton.tsx';
+import SaveButton from './SaveButton.tsx';
 
 export type CanvasProps = {
 	sendStroke: (stroke: Stroke) => void
@@ -226,6 +227,13 @@ export default function Canvas(props: CanvasProps) {
 		}
     }
 	
+	function saveCanvas() {
+		console.log("saveCanvas called");
+		// let canv = canvasRef.current;
+		// let image = canv.toDataURL("image/png").replace("image/png", "image/octet-stream");
+		// window.location.href = image;
+	}
+	
 	
 	const updateErasing = () => {
 		updateEraserState();
@@ -311,6 +319,17 @@ export default function Canvas(props: CanvasProps) {
 			}}
 		/>
 		
+		<SaveButton
+			saveCanvasFunction={saveCanvas}
+			style={{
+				position: "absolute",
+				top: (sidebarDistanceFromTop + checkboxHeight * 5) + "px",
+				left: sidebarDistanceFromLeft + "px",
+				zIndex: 1,
+				width: checkboxWidth,
+				height: checkboxHeight
+			}}
+		/>
 		
         <canvas id="canvas" 
 			width={window.innerWidth} 
