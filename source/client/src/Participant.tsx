@@ -3,10 +3,6 @@ import { useParams } from 'react-router-dom';
 import Canvas from './assets/Canvas.tsx';
 import type { Stroke } from './assets/Canvas.tsx';
 import type { Room } from '../../server/IWDB.ts';
-import PaintColourButton from './assets/PaintColourButton.tsx';
-import BrushWidthSlider from './assets/BrushWidthSlider.tsx';
-import BackgroundColourButton from './assets/BackgroundColourButton.tsx';
-import EraserButton from './assets/EraserButton.tsx';
 import RoomCodeText from './assets/RoomCodeText.tsx';
 
 
@@ -50,39 +46,39 @@ function Participant() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ roomcode: roomcode })
         })
-            .then(response => response.json())
-            .then(incRoom => {
-                let i = 0;
-                
-                //setRecievedStroke(incRoom)
-                const newStrokes = recievedStroke.concat([]);
-                for(let stroke of incRoom.strokeHistory){
-                    console.log(`stroke: ${i}`);
-                    newStrokes.push(stroke);
-                    //setRecievedStroke(stroke);//replaces the old one here
-                    i++;
-                }
-                setRecievedStroke(newStrokes);
-                setRoom(incRoom);
-                let newWebsocket = new WebSocket('ws://' + window.location.hostname + `:${incRoom.socketNumber}`, 'echo-protocol');
-                newWebsocket.onopen = () => {
-                    console.log('WebSocket connection established');
-                };
+		.then(response => response.json())
+		.then(incRoom => {
+			let i = 0;
+			
+			//setRecievedStroke(incRoom)
+			const newStrokes = recievedStroke.concat([]);
+			for(let stroke of incRoom.strokeHistory){
+				console.log(`stroke: ${i}`);
+				newStrokes.push(stroke);
+				//setRecievedStroke(stroke);//replaces the old one here
+				i++;
+			}
+			setRecievedStroke(newStrokes);
+			setRoom(incRoom);
+			let newWebsocket = new WebSocket('ws://' + window.location.hostname + `:${incRoom.socketNumber}`, 'echo-protocol');
+			newWebsocket.onopen = () => {
+				console.log('WebSocket connection established');
+			};
 
-                newWebsocket.onmessage = socketOnMessage;
+			newWebsocket.onmessage = socketOnMessage;
 
-                newWebsocket.onclose = () => {
-                    console.log('WebSocket connection closed');
-                };
+			newWebsocket.onclose = () => {
+				console.log('WebSocket connection closed');
+			};
 
-                newWebsocket.onerror = (error) => {
-                    console.error('WebSocket error:', error);
-                };
-                setSocket(newWebsocket);
-                return () => {
-                    newWebsocket.close();
-                };
-            });
+			newWebsocket.onerror = (error) => {
+				console.error('WebSocket error:', error);
+			};
+			setSocket(newWebsocket);
+			return () => {
+				newWebsocket.close();
+			};
+		});
         /*
         const newSocket = new WebSocket('ws://' + window.location.hostname + ':2210', 'echo-protocol');
         setSocket(newSocket);

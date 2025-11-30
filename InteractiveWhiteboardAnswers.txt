@@ -7,11 +7,12 @@ A question answered with "done" means it was written directly into the word docu
 A question mark next to a question number indicates the question is mostly done (just requires
 screenshots be taken or minor adjustments be made)
 
-Part 2		: 10?, 12? - answers are there, not sure how complete they are
-
-Part 3 (31)	: 3.4, 3.5, 3.7, 3.8, 3.12, 3.15, 3.24, 3.28
-Part 4 (4)	: 1?, 2?, 3, 4
-Part 5 (2)	: 1?, 2?
+Part 3 (31)	: 3.24 (use of mobile client's file system),
+Part 4 (4)	: 2? (deploy app to multiple mobile devices),
+		  3 (http integration tests),
+		  4 (testing checklist)
+Part 5 (2)	: 1? (deployment),
+		  2? (public download of app)
 
 
 
@@ -225,7 +226,9 @@ predictable the current room IDs are (they count up starting from 1), however th
 which can be fixed fairly quickly.
 
 2.9
-[images of the UI testing thing - in image evidence folder]
+[ss: 2.9 - UI design 1.jpg]
+[ss: 2.9 - UI design 2.jpg]
+[ss: 2.9 - UI design 3.jpg]
 
 2.10
 line segment system and how its communicated over the network, the infinite canvas thing
@@ -256,8 +259,9 @@ sequenceDiagram
     Host-)WsServer: Close room request
     WsServer->>-Host: Room has been closed
 
-??? _____________
 
+[ss: 2.10 - app home screen.jpg]
+[ss: 2.9 - UI design 3.jpg]
 [ss: 2.10 - vite ws host participant sequence diagram]
 [ss: 2.10 - main screen on mobile]
 [ss: 2.10 - main screen on desktop]
@@ -280,6 +284,7 @@ Manual UI tests:
 . shift the canvas around to check local and remote originating lines move correctly
 Integration tests:
 . test adding a record to the strokes collection in the database
+. test each http endpoint for the correct status code and return information
 Non-functional tests:
 . test drawing loads of lines on a canvas and checking the system resource usage for abnormalities
 
@@ -321,10 +326,14 @@ Subjectively, the IDE could be any text editor, and is therefore not a necessary
 [ss: use of automation facilities (vite build)]
 
 3.4
-
+[ss: 3.4 - drawStroke in useLayoutEffect]
+[ss: 3.4 - update canvas by websocket event]
 
 3.5
-
+[ss: 3.5 - before interaction.jpg]
+[ss: 3.5 - after tap.jpg]
+[ss: 3.5 - after horizontal swipe.jpg]
+[ss: 3.5 - after vertical swipe.jpg]
 
 3.6
 The auto resizing of the canvas when the device window changes size/shape works automatically through
@@ -332,10 +341,15 @@ react, but it doesn't work immediately - it requires the user to interact with i
 updates.
 
 3.7
-
+[ss: 3.7 - uses of objects 1.png]
+[ss: 3.7 - uses of objects 2.png]
+[ss: 3.7 - uses of objects 3.png]
 
 3.8
-
+Pretty much everything in this application is designed and custom written for it, or is part of a third
+party library, however everything is broken into individual pieces/modules as much as possible to reduce
+coupling and repeated code.
+[ss: 3.8 - modules in the programming]
 
 3.9
 [ss: 3.9 - async operation]
@@ -355,6 +369,8 @@ change stroke history array into circular buffer
 The system works by storing lines in an array in memory, which works, but after a few people have
 drawn a few long lines, can become a serious performance issue.
 
+[ss: 3.12 - db room is removed upon room closing]
+
 3.13
 There are a number of these, but the LineSegment type is an object which contains nullable Point
 objects, which are each an array of numbers with length 2.
@@ -366,7 +382,11 @@ difference between where the global (0, 0) is, and where the client is (measured
 corner is as an origin for on-screen coordinates)
 [ss: 3.14 - coordinates 2d ds]
 
-3.15 application doesn't use any...
+3.15 application doesn't use any currently...
+
+A good optimisation (or intentional limitation) for the app would be to make the array that stores
+all the strokes into a circular buffer so that strokes start to drop off once more than a certain
+capacity has been reached.
 
 
 3.16
@@ -422,7 +442,18 @@ Strokes stored in object form in memory locally. The storage is of the form
 [ss: 3.27 - as close to IDE debugging as ill get]
 
 3.28
+Several times I've assumed TS is like python, and doesn't require a variable declaration before it's
+used, and fixed it by adding `let ` to the start of the line.
+[ss: 3.28 - syntactic error after]
 
+The logical error hasn't got a good before image, because there wasn't a commit between having the
+error and fixing it. The error was about trying to convert local canvas coordinates to global
+coordinates so that strokes could be stored relative to each other in a global scope
+[ss: 3.28 - logical error after]
+
+The design error was deciding to use raw html rather than react
+[ss: 3.28 - design error before]
+[ss: 3.28 - design error after]
 
 3.29
 [ss: 3.29 - optimisation 1 - remove method bc useless]

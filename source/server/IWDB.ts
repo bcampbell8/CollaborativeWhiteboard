@@ -5,13 +5,10 @@ import type { Stroke } from '../client/src/assets/Canvas'
 
 // probably will need to change the url at some point from localhost?
 // sorry for changing it  -D
-const MongoDbServerUrl = 'mongodb://192.168.9.51:27017';
+const MongoDbServerUrl = 'mongodb://10.1.1.35:27017';
 export { MongoDbServerUrl };
 
-
-
-const url = MongoDbServerUrl;
-const client = new MongoClient(url);
+const client = new MongoClient(MongoDbServerUrl);
 
 //Provide reference name for database and table (collection)
 const dbName = 'IWDB';
@@ -68,7 +65,6 @@ export async function UpdateHistory(db: Db, roomCode:string, incomingStroke: Str
         }
     });
     return history;
- 
 }
 
 export async function CloseRoom(db: Db, roomCode:string) : Promise<Room | null> {
@@ -85,8 +81,6 @@ export async function CloseRoom(db: Db, roomCode:string) : Promise<Room | null> 
         console.log(error);
         return null;
     }
-    
-
 }
 
 async function RetrieveRoomHistory(db: Db, roomCode: string): Promise<Stroke[] | null> {

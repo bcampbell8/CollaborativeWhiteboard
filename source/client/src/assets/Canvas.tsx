@@ -11,9 +11,9 @@ export type CanvasProps = {
 	recievedStroke: Array<Stroke> // Receives an array of strokes to redraw the canvas.
 }
 
-const startingBrushColour = "#000000";
+const startingBrushColour = "#111111";
 const startingBrushWidth = 5;
-const startingBackgroundColour = "#F0F0F0";
+const startingBackgroundColour = "#F6F6F6";
 const startingEraserState = false;
 const startingMovingCanvasState = false;
 const startingSliderVisibility = false;
@@ -114,10 +114,7 @@ export default function Canvas(props: CanvasProps) {
 		}
 		// Update the stroke history, then redraw the canvas.
 		setStrokeHistory(updatedStrokeHistory);
-		// console.log(props.recievedStroke);
 		strokeHistory.map(e => drawStroke(e))
-		//props.recievedStroke.map(e => drawStroke(e));
-		//drawStroke(props.recievedStroke);
 
         //Need to include the props here in dependency array
 	}, [props.recievedStroke]);
@@ -158,7 +155,7 @@ export default function Canvas(props: CanvasProps) {
 
     //Needs to create a new LineSegment each time mouse is moved.
     const handlePointerMove = (e: PointerEvent) => {
-		if (!isPointerDown){
+		if (!isPointerDown) {
 			return;
 		}
 		if (movingCanvasState == false) {
@@ -228,10 +225,12 @@ export default function Canvas(props: CanvasProps) {
     }
 	
 	function saveCanvas() {
-		console.log("saveCanvas called");
-		// let canv = canvasRef.current;
-		// let image = canv.toDataURL("image/png").replace("image/png", "image/octet-stream");
-		// window.location.href = image;
+		// console.log("saveCanvas outer called");
+		if (canvasRef.current) {
+			console.log("saveCanvas inner called");
+			// let image = canvasRef.current.toDataURL("image/png").replace("image/png", "image/octet-stream");
+			// window.location.href = image;
+		}
 	}
 	
 	
