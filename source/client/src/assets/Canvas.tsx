@@ -225,11 +225,12 @@ export default function Canvas(props: CanvasProps) {
     }
 	
 	function saveCanvas() {
-		// console.log("saveCanvas outer called");
 		if (canvasRef.current) {
-			console.log("saveCanvas inner called");
-			// let image = canvasRef.current.toDataURL("image/png").replace("image/png", "image/octet-stream");
-			// window.location.href = image;
+			// console.log("saveCanvas inner called");
+			const link = document.createElement('a');
+			link.href = canvasRef.current.toDataURL();
+			link.download = 'my-drawing.png';
+			link.click();
 		}
 	}
 	

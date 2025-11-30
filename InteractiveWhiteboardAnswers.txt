@@ -7,7 +7,6 @@ A question answered with "done" means it was written directly into the word docu
 A question mark next to a question number indicates the question is mostly done (just requires
 screenshots be taken or minor adjustments be made)
 
-Part 3 (31)	: 3.24 (use of mobile client's file system),
 Part 4 (4)	: 2? (deploy app to multiple mobile devices),
 		  3 (http integration tests),
 		  4 (testing checklist)
@@ -428,7 +427,7 @@ The application does not necessarily store valuable information - importantly, i
 meaning there is no chance any user accounts could be compromised (since there are none).
 
 3.24
-save button to save current view as png
+[ss: 3.24 - use of mobile client to save current view]
 
 3.25
 Strokes stored in object form in memory locally. The storage is of the form

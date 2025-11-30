@@ -13,7 +13,7 @@ function SaveButton(props: SaveButtonProps) {
 	
 	return (<>
 		<button
-			onClick={props.saveCanvasFunction()}
+			onClick={() => { props.saveCanvasFunction(); }}
 			style={props.style}
 		/>
     </>)
