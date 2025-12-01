@@ -72,6 +72,9 @@ function createNewCode() {
     for (let i = 0; i < 6; i++) {
         output += characters[Math.floor(Math.random() * charlen)];
     }
+
+    // add roomcode to db
+
     return output;
 }
 

@@ -30,6 +30,11 @@ export interface Room {
     participants: Array<String>
 }
 
+/**
+ * Recieves the Db, a roomcode, and a socket number and asynchronously creates a new record
+ * for the room.
+ * @author BCampbell
+ */
 export async function CreateRoomEntry(db: Db, roomcode: number, socket: number) : Promise<Room | null> {
     const collection = db.collection<Room>('Rooms');
     const room: Room = {
