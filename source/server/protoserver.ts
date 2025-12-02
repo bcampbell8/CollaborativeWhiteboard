@@ -12,7 +12,7 @@ app.use(express.json());
 
 const mongoUrl = MongoDbServerUrl;
 const client = new MongoClient(mongoUrl)
-await client.connect();
+client.connect();
 let IWDB: Db;
 console.log("Db client connected");
 try {
@@ -116,7 +116,7 @@ app.get("/create", async (req, res) => {
             console.log('Client disconnected');
         });
     });
-    console.log(`New room open on:${socketGen} `);
+    // console.log(`New room open on:${socketGen} `);
 });
 
 /**
@@ -154,6 +154,8 @@ app.listen(httpport, () => {
     console.log(`HTTP server is listening on port ${httpport}`);
 });
 
+
+export { app };
 
 
 

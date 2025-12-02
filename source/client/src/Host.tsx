@@ -36,7 +36,7 @@ function Host() {
 	}
 
 	useEffect(() => {
-		fetch("http://localhost:2211/create")
+		fetch("http://" + window.location.hostname + ":2211/create")
 			.then(response => response.json())
 			.then(incRoom => {
 				setRoom(incRoom);

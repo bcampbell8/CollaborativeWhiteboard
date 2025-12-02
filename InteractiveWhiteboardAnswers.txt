@@ -8,7 +8,7 @@ A question mark next to a question number indicates the question is mostly done 
 screenshots be taken or minor adjustments be made)
 
 Part 4 (4)	: 2? (deploy app to multiple mobile devices),
-		  3 (http integration tests),
+		  3 (http integration tests), ---------
 		  4 (testing checklist)
 Part 5 (2)	: 1? (deployment),
 		  2? (public download of app)
