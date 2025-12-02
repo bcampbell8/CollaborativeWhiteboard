@@ -1,6 +1,6 @@
 import {expect, test} from 'vitest'
-import PaintColourButton from '../source/client/src/assets/PaintColourButton'
-import RoomCodeText from '../source/client/src/assets/RoomCodeText'
+import PaintColourButton from '../../source/client/src/assets/PaintColourButton'
+import RoomCodeText from '../../source/client/src/assets/RoomCodeText'
 import {render} from 'vitest-browser-react'
 
 test.skip('Paint Colour Button successfully changes colour', async () => {
