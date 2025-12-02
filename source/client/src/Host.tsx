@@ -27,8 +27,6 @@ function Host() {
 	}
 
 	function socketOnMessage(event) {
-		// This is probably quite scuffed and there needs to be more done such as updating stroke history etc.
-		// What about if my colour / thickness is different?
 		const message = JSON.parse(event.data);
 		const messageHeader = message.action;
 		if (messageHeader === "Update") {
@@ -38,7 +36,7 @@ function Host() {
 	}
 
 	useEffect(() => {
-		fetch("http://localhost:2211/create")
+		fetch("http://" + window.location.hostname + ":2211/create")
 			.then(response => response.json())
 			.then(incRoom => {
 				setRoom(incRoom);

@@ -4,15 +4,16 @@ import PaintColourButton from './PaintColourButton.tsx';
 import BrushWidthSliderHider from './BrushWidthSliderHider.tsx';
 import BackgroundColourButton from './BackgroundColourButton.tsx';
 import EraserButton from './EraserButton.tsx';
+import SaveButton from './SaveButton.tsx';
 
 export type CanvasProps = {
 	sendStroke: (stroke: Stroke) => void
 	recievedStroke: Array<Stroke> // Receives an array of strokes to redraw the canvas.
 }
 
-const startingBrushColour = "#000000";
+const startingBrushColour = "#111111";
 const startingBrushWidth = 5;
-const startingBackgroundColour = "#F0F0F0";
+const startingBackgroundColour = "#F6F6F6";
 const startingEraserState = false;
 const startingMovingCanvasState = false;
 const startingSliderVisibility = false;
@@ -62,14 +63,25 @@ export default function Canvas(props: CanvasProps) {
 	
 	function drawStroke(stroke: Stroke) {
 		// console.log("drawing: " + JSON.stringify(stroke));
-		// if (JSON.stringify(stroke) == "{}") {
-		// 	return;
-		// }
+		
 		// Check if context has been rendered
 		if (contextRef.current) {
 
 			//Loop through segments of the stroke being drawn, and draw each segment.
 			for (let segment of stroke.segments) {
+				// segment is [X, Y]
+				let screenBounds = canvasRef.current.getBoundingClientRect();
+				if (segment.start[0] - absoluteCanvasLocation[0] < screenBounds.left ||
+					segment.start[0] - absoluteCanvasLocation[0] > screenBounds.right ||
+					segment.start[1] - absoluteCanvasLocation[1] < screenBounds.top ||
+					segment.start[1] - absoluteCanvasLocation[1] > screenBounds.bottom ||
+					segment.finish[0] - absoluteCanvasLocation[0] < screenBounds.left ||
+					segment.finish[0] - absoluteCanvasLocation[0] > screenBounds.right ||
+					segment.finish[1] - absoluteCanvasLocation[1] < screenBounds.top ||
+					segment.finish[1] - absoluteCanvasLocation[1] > screenBounds.bottom
+				) {
+					continue;
+				}
 				contextRef.current.strokeStyle = stroke.strokeColour;
 				contextRef.current.lineWidth = stroke.strokeWidth;
 				contextRef.current.beginPath();
@@ -102,10 +114,7 @@ export default function Canvas(props: CanvasProps) {
 		}
 		// Update the stroke history, then redraw the canvas.
 		setStrokeHistory(updatedStrokeHistory);
-		console.log(props.recievedStroke);
 		strokeHistory.map(e => drawStroke(e))
-		//props.recievedStroke.map(e => drawStroke(e));
-		//drawStroke(props.recievedStroke);
 
         //Need to include the props here in dependency array
 	}, [props.recievedStroke]);
@@ -146,7 +155,7 @@ export default function Canvas(props: CanvasProps) {
 
     //Needs to create a new LineSegment each time mouse is moved.
     const handlePointerMove = (e: PointerEvent) => {
-		if (!isPointerDown){
+		if (!isPointerDown) {
 			return;
 		}
 		if (movingCanvasState == false) {
@@ -214,6 +223,16 @@ export default function Canvas(props: CanvasProps) {
 			props.sendStroke(stroke);
 		}
     }
+	
+	function saveCanvas() {
+		if (canvasRef.current) {
+			// console.log("saveCanvas inner called");
+			const link = document.createElement('a');
+			link.href = canvasRef.current.toDataURL();
+			link.download = 'my-drawing.png';
+			link.click();
+		}
+	}
 	
 	
 	const updateErasing = () => {
@@ -300,13 +319,24 @@ export default function Canvas(props: CanvasProps) {
 			}}
 		/>
 		
+		<SaveButton
+			saveCanvasFunction={saveCanvas}
+			style={{
+				position: "absolute",
+				top: (sidebarDistanceFromTop + checkboxHeight * 5) + "px",
+				left: sidebarDistanceFromLeft + "px",
+				zIndex: 1,
+				width: checkboxWidth,
+				height: checkboxHeight
+			}}
+		/>
 		
         <canvas id="canvas" 
 			width={window.innerWidth} 
 			height={window.innerHeight}
 			style={{
 				width: "100%",
-				height: "95%",
+				height: "100%",
 				background: globalBackgroundColour,
 				zIndex: 0
 			}}

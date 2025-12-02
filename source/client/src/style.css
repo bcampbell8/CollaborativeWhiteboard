@@ -19,6 +19,8 @@
   overflow-y: hidden;
   
   touch-action: none;
+  
+  height: 100vh;
 }
 
 body {

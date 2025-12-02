@@ -8,10 +8,7 @@ import type { Stroke } from '../client/src/assets/Canvas'
 const MongoDbServerUrl = 'mongodb://localhost:27017';
 export { MongoDbServerUrl };
 
-
-
-const url = MongoDbServerUrl;
-const client = new MongoClient(url);
+const client = new MongoClient(MongoDbServerUrl);
 
 //Provide reference name for database and table (collection)
 const dbName = 'IWDB';
@@ -33,6 +30,11 @@ export interface Room {
     participants: Array<String>
 }
 
+/**
+ * Recieves the Db, a roomcode, and a socket number and asynchronously creates a new record
+ * for the room.
+ * @author BCampbell
+ */
 export async function CreateRoomEntry(db: Db, roomcode: number, socket: number) : Promise<Room | null> {
     const collection = db.collection<Room>('Rooms');
     const room: Room = {
@@ -68,7 +70,6 @@ export async function UpdateHistory(db: Db, roomCode:string, incomingStroke: Str
         }
     });
     return history;
- 
 }
 
 export async function CloseRoom(db: Db, roomCode:string) : Promise<Room | null> {
@@ -85,8 +86,6 @@ export async function CloseRoom(db: Db, roomCode:string) : Promise<Room | null> 
         console.log(error);
         return null;
     }
-    
-
 }
 
 async function RetrieveRoomHistory(db: Db, roomCode: string): Promise<Stroke[] | null> {

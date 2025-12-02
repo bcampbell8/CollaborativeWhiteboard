@@ -12,7 +12,7 @@ app.use(express.json());
 
 const mongoUrl = MongoDbServerUrl;
 const client = new MongoClient(mongoUrl)
-await client.connect();
+client.connect();
 let IWDB: Db;
 console.log("Db client connected");
 try {
@@ -21,8 +21,8 @@ try {
     const collection = IWDB.collection<Room>('Rooms');
     collection.drop();
     console.log("Rooms table reset.");
-} catch (err) {
-    console.log(err);
+} catch (error) {
+    console.log(error);
 }
 
 
@@ -79,13 +79,10 @@ function createNewCode() {
 }
 
 
-app.get("/verifyroom", (request, response) => {
-
-    // check if room in db
-
-    response.send("true");
-});
-
+/**
+ * CreateRoom endpoint for the REST API - called to create a new room
+ * @author BCampbell
+ */
 app.get("/create", async (req, res) => {
     console.log("Incoming request on /create!");
     roomcodeGen++;
@@ -101,7 +98,7 @@ app.get("/create", async (req, res) => {
             let parsedMsg = JSON.parse(message);
             //console.log(`${IWDB}, ${parsedMsg.room.roomcode}, ${parsedMsg.strokeToDraw}`);
             let stroke = await UpdateHistory(IWDB, parsedMsg.room.roomcode, parsedMsg.strokeToDraw);
-            console.log("after database call: "+stroke);
+            console.log("after database call: " + stroke);
             // if (message.request && message.request == "roomcode") {
             // ws.send(JSON.stringify({ response: "roomcode", code: createNewCode() }));
             // return;
@@ -119,9 +116,13 @@ app.get("/create", async (req, res) => {
             console.log('Client disconnected');
         });
     });
-    console.log(`New room open on:${socketGen} `);
+    // console.log(`New room open on:${socketGen} `);
 });
 
+/**
+ * Join endpoint for the REST API - only called when room has been verified to exist
+ * @author BCampbell
+ */
 app.post("/join", async (req, res) => {
     console.log("Incoming join request on /join!");
     let roomcode = req.body.roomcode;
@@ -129,6 +130,11 @@ app.post("/join", async (req, res) => {
     res.send(room).status(200);
 });
 
+/**
+ * FindRoom endpoint for the REST API - verifies a room exists and returns a JSON object
+ * containing the info about the room.
+ * @author BCampbell
+ */
 app.post("/findroom", async (req, res) => {
     console.log("Incoming find request on /findroom! " + req.body);
     let roomcode = req.body.roomcode;
@@ -148,6 +154,8 @@ app.listen(httpport, () => {
     console.log(`HTTP server is listening on port ${httpport}`);
 });
 
+
+export { app };
 
 
 
