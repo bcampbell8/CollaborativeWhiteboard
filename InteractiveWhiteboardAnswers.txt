@@ -9,10 +9,10 @@ screenshots be taken or minor adjustments be made)
 
 Part 4 (4)	: 2? (deploy app to multiple mobile devices),
 		  3 (http integration tests), ---------
-		  4 (testing checklist)
+		  4 (testing checklist) --------
 Part 5 (2)	: 1? (deployment),
-		  2? (public download of app)
-
+		  2? (app apk - github releases)
+implement circular buffer
 
 
 1.1
@@ -472,7 +472,8 @@ part 4: testing and stuff
 [ss: use of an appropriate emulator]
 
 4.2
-[image of multiple different phones connected to a single host]
+[ss: 4.2 - deployment 1]
+[ss: 4.2 - deployment 2]
 
 4.3
 HTTP integration tests, positive and negative responses
