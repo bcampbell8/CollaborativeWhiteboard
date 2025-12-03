@@ -1,7 +1,4 @@
 
-
-// import CircularBuffer from 'CircularBuffer.ts';
-
 export default class CircularBuffer<T> {
 	
 	private buffer : Array<T | null>
@@ -13,8 +10,6 @@ export default class CircularBuffer<T> {
 		this.buffer = new Array<T>(capacity);
 		this.buffer.fill(null);
 	}
-	
-	// write pointer must be ahead of read pointer (no overlap, unless read pointer has caught up to write pointer)
 	
 	read() : T | null {
 		// return readIndex and increment, unless rI > buffer.capacity, in which case wrap around
@@ -47,3 +42,10 @@ export default class CircularBuffer<T> {
 		return this.buffer.length;
 	}
 }
+
+
+
+
+
+
+

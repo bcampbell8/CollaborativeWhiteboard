@@ -5,6 +5,7 @@ import BrushWidthSliderHider from './BrushWidthSliderHider.tsx';
 import BackgroundColourButton from './BackgroundColourButton.tsx';
 //import EraserButton from './EraserButton.tsx';
 import SaveButton from './SaveButton.tsx';
+import CircularBuffer from 'CircularBuffer.ts';
 
 export type CanvasProps = {
 	sendStroke: (stroke: Stroke) => void
@@ -60,8 +61,9 @@ export default function Canvas(props: CanvasProps) {
     const [lineSegment, setLineSegment] = useState<LineSegment | null>(null);
     const [stroke, setStroke] = useState<Stroke | null>(null);
     const [strokeHistory, setStrokeHistory] = useState<Array<Stroke>>([]);
-	
-	
+    const [buffer, setBuffer] = useState<CircularBuffer>(null);
+    
+    
 	function drawStroke(stroke: Stroke) {
 		// Check if context has been rendered
 		if (contextRef.current) {
