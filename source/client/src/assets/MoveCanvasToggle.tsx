@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 
-type MoveCanvasToggleProps = {
+export type MoveCanvasToggleProps = {
 	updateMovingCanvasFunction: (value: boolean) => void
 	style
 }
@@ -21,7 +21,7 @@ function MoveCanvasToggle(props: MoveCanvasToggleProps) {
 	return (<>
 		<input type="checkbox"
 			id="movecanvastogglebutton"
-			value={inMotion}
+			value={inMotion.toString()}
 			onChange={onStateChange}
 			style={props.style}
 		/>

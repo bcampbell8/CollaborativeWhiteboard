@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 type EraserButtonProps = {
 	initialEraserState: boolean
 	updateEraserStateFunction: (state: boolean) => void
-	style
+	style: any
 }
 
 
@@ -17,9 +17,14 @@ function EraserButton(props: EraserButtonProps) {
 	}
 	
 	return (<>
-		<input type="checkbox" value={state} id="backgroundColourInput"
+		<input type="checkbox" value={state.toString()} id="backgroundColourInput"
 			style={props.style}
-			onChange={e => onStateChange(e.target.value)}
+			onChange={e => {
+				if (e.target.value === 'true'){
+					onStateChange(true)
+				}else{
+					onStateChange(false)
+				}}}
 		/>
     </>)
 }

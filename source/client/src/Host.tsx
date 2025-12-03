@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom';
+//import { useParams } from 'react-router-dom';
 import './style.css'
 import Canvas, { type Stroke } from './assets/Canvas.tsx';
 import RoomCodeText from './assets/RoomCodeText.tsx';
@@ -67,7 +67,6 @@ function Host() {
 	return (<>
 		<Canvas
 			sendStroke={sendStroke}
-			updateContextRef={setContextRef}
 			recievedStroke={recievedStroke}
 		/>
 		{room && <RoomCodeText text={`roomcode: ${room.roomcode} port: ${room.socketNumber} `} />}

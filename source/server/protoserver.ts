@@ -1,10 +1,11 @@
-import express from 'express';
+import express, { raw } from 'express';
 import { WebSocket, WebSocketServer } from 'ws';
-import { MongoDbServerUrl, type Room } from './IWDB.ts'
-import { CreateRoomEntry, JoinRequest, UpdateHistory, CloseRoom } from './IWDB.ts'
+import { MongoDbServerUrl, type Room } from './IWDB.js'
+import { CreateRoomEntry, JoinRequest, UpdateHistory, CloseRoom } from './IWDB.js'
 import { Db, MongoClient } from 'mongodb';
 import cors from 'cors';
 
+//!!To have protoserver work you'll need to run a mongod process!
 
 const app = express();
 app.use(cors());
@@ -25,45 +26,12 @@ try {
     console.log(error);
 }
 
-
-/*
-let wsport = 2210;
-const wss = new WebSocketServer({ port: wsport });
-console.log(`WS server is listening on port ${wsport}`);
-*/
-
 //Seed room code generator
 let roomcodeGen: number = 0;
 
 //Seed socket generator
 let socketGen: number = 7000;
 
-//Potentially make an array that houses all open websockets?
-/*
-wss.on('connection', (ws) => {
-    console.log("New client connected to server");
-
-    ws.on('message', (message) => {
-        console.log(`Server Received Message: ${message}`);
-        let parsedMsg = JSON.parse(message);
-        // if (message.request && message.request == "roomcode") {
-        // ws.send(JSON.stringify({ response: "roomcode", code: createNewCode() }));
-        // return;
-        // }
-        //Broadcast message to all connected clients
-        // console.log(typeof(message));
-        wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(message.toString());
-            }
-        });
-    });
-
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
-});
-*/
 
 function createNewCode() {
     let output = "";
@@ -94,17 +62,15 @@ app.get("/create", async (req, res) => {
         console.log("New client connected to server");
 
         ws.on('message', async (message) => {
-            //console.log(`Server Received Message: ${message}`);
             let parsedMsg = JSON.parse(message);
-            //console.log(`${IWDB}, ${parsedMsg.room.roomcode}, ${parsedMsg.strokeToDraw}`);
             let stroke = await UpdateHistory(IWDB, parsedMsg.room.roomcode, parsedMsg.strokeToDraw);
             console.log("after database call: " + stroke);
             // if (message.request && message.request == "roomcode") {
             // ws.send(JSON.stringify({ response: "roomcode", code: createNewCode() }));
             // return;
             // }
+
             //Broadcast message to all connected clients
-            // console.log(typeof(message));
             wss.clients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {
                     client.send(message.toString());
@@ -136,7 +102,7 @@ app.post("/join", async (req, res) => {
  * @author BCampbell
  */
 app.post("/findroom", async (req, res) => {
-    console.log("Incoming find request on /findroom! " + req.body);
+    console.log("Incoming find request on /findroom! ");
     let roomcode = req.body.roomcode;
     let roomExists = false;
     let room = await JoinRequest(IWDB, roomcode);

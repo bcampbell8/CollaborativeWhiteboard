@@ -1,17 +1,17 @@
 import { Db, MongoClient } from 'mongodb';
-import type { Stroke } from '../client/src/assets/Canvas'
+import type { Stroke } from '../client/src/assets/Canvas.tsx'
 
 
 
 // probably will need to change the url at some point from localhost?
 // sorry for changing it  -D
-const MongoDbServerUrl = 'mongodb://10.1.1.35:27017';
+const MongoDbServerUrl = 'mongodb://localhost:27017';
 export { MongoDbServerUrl };
 
 const client = new MongoClient(MongoDbServerUrl);
 
 //Provide reference name for database and table (collection)
-const dbName = 'IWDB';
+//const dbName = 'IWDB';
 
 
 //Create hash map that maps protocol actions to associated functions
@@ -24,6 +24,7 @@ const dbName = 'IWDB';
 
 //Interface helps provide typing information for table and handling socket connections
 export interface Room {
+    _id: string;
     roomcode: string;
     socketNumber: number;
     strokeHistory: Array<Stroke>
@@ -38,6 +39,7 @@ export interface Room {
 export async function CreateRoomEntry(db: Db, roomcode: number, socket: number) : Promise<Room | null> {
     const collection = db.collection<Room>('Rooms');
     const room: Room = {
+        _id: "",
         roomcode: `${roomcode}`,
         socketNumber: socket,
         strokeHistory: [],
@@ -69,7 +71,7 @@ export async function UpdateHistory(db: Db, roomCode:string, incomingStroke: Str
             strokeHistory: history.strokeHistory
         }
     });
-    return history;
+    return history.strokeHistory;
 }
 
 export async function CloseRoom(db: Db, roomCode:string) : Promise<Room | null> {
@@ -88,10 +90,11 @@ export async function CloseRoom(db: Db, roomCode:string) : Promise<Room | null> 
     }
 }
 
-async function RetrieveRoomHistory(db: Db, roomCode: string): Promise<Stroke[] | null> {
+//was returning Stroke[]
+async function RetrieveRoomHistory(db: Db, roomCode: string): Promise<Room | null> {
     const collection = db.collection<Room>('Rooms');
     try {
-        const history = await collection.findOne<Stroke[]>(
+        const history = await collection.findOne<Room>(
             {roomcode: `${roomCode}`}, {
                 //This exclusively retrieves the stroke history
                 projection: {_id: 0, strokeHistory: 1}
