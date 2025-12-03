@@ -18,5 +18,8 @@
     "supertest": "^7.1.4",
     "vitest": "^4.0.14",
     "vitest-browser-react": "^2.0.2"
+  },
+  "dependencies": {
+    "mongodb": "^7.0.0"
   }
 }

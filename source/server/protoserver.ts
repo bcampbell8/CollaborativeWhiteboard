@@ -5,6 +5,7 @@ import { CreateRoomEntry, JoinRequest, UpdateHistory, CloseRoom } from './IWDB.j
 import { Db, MongoClient } from 'mongodb';
 import cors from 'cors';
 
+//!!To have protoserver work you'll need to run a mongod process!
 
 const app = express();
 app.use(cors());
@@ -68,7 +69,7 @@ app.get("/create", async (req, res) => {
             // ws.send(JSON.stringify({ response: "roomcode", code: createNewCode() }));
             // return;
             // }
-            
+
             //Broadcast message to all connected clients
             wss.clients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {

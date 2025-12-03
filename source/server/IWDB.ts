@@ -24,6 +24,7 @@ const client = new MongoClient(MongoDbServerUrl);
 
 //Interface helps provide typing information for table and handling socket connections
 export interface Room {
+    _id: string;
     roomcode: string;
     socketNumber: number;
     strokeHistory: Array<Stroke>
@@ -38,6 +39,7 @@ export interface Room {
 export async function CreateRoomEntry(db: Db, roomcode: number, socket: number) : Promise<Room | null> {
     const collection = db.collection<Room>('Rooms');
     const room: Room = {
+        _id: "",
         roomcode: `${roomcode}`,
         socketNumber: socket,
         strokeHistory: [],
