@@ -1,4 +1,4 @@
-package au.com.collaborativewhiteboard.app;
+package com.collaborativewhiteboard.app;
 
 import com.getcapacitor.BridgeActivity;
 

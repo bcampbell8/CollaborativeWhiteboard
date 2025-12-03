@@ -10,7 +10,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "@vitejs/plugin-react": "^5.1.1",
     "@vitest/browser-playwright": "^4.0.14",

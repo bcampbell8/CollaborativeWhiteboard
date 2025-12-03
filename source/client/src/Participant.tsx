@@ -108,7 +108,6 @@ function Participant() {
     return (<>
         <Canvas
             sendStroke={sendStroke}
-            updateContextRef={setContextRef}
             recievedStroke={recievedStroke}
         />
 

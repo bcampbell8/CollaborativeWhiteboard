@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Collaborative Whiteboard</string>
-    <string name="title_activity_main">Collaborative Whiteboard</string>
-    <string name="package_name">au.com.collaborativewhiteboard.app</string>
-    <string name="custom_url_scheme">au.com.collaborativewhiteboard.app</string>
+    <string name="app_name">CollaborativeWhiteboard</string>
+    <string name="title_activity_main">CollaborativeWhiteboard</string>
+    <string name="package_name">com.collaborativewhiteboard.app</string>
+    <string name="custom_url_scheme">com.collaborativewhiteboard.app</string>
 </resources>

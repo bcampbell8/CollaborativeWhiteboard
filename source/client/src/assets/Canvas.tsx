@@ -3,7 +3,7 @@ import MoveCanvasToggle from './MoveCanvasToggle.tsx';
 import PaintColourButton from './PaintColourButton.tsx';
 import BrushWidthSliderHider from './BrushWidthSliderHider.tsx';
 import BackgroundColourButton from './BackgroundColourButton.tsx';
-import EraserButton from './EraserButton.tsx';
+//import EraserButton from './EraserButton.tsx';
 import SaveButton from './SaveButton.tsx';
 
 export type CanvasProps = {
@@ -14,13 +14,14 @@ export type CanvasProps = {
 const startingBrushColour = "#111111";
 const startingBrushWidth = 5;
 const startingBackgroundColour = "#F6F6F6";
-const startingEraserState = false;
+//const startingEraserState = false;
 const startingMovingCanvasState = false;
 const startingSliderVisibility = false;
+let startPosition: [number, number] = [0,0];
 
 
 export type Stroke = {
-	strokeDisplacement: Array<number, number>
+	strokeDisplacement: [number, number]
     strokeColour: string,
     strokeWidth: number,
     segments: Array<LineSegment | null>
@@ -39,7 +40,7 @@ export type Point = [number, number];
 
 export default function Canvas(props: CanvasProps) {
 	
-	const [absoluteCanvasLocation, updateAbsoluteCanvasLocation] = useState([0, 0]);
+	const [absoluteCanvasLocation, updateAbsoluteCanvasLocation] = useState(startPosition);
 	const [previousX, setPreviousX] = useState(0);
 	const [previousY, setPreviousY] = useState(0);
 	const [diffX, setDiffX] = useState(0);
@@ -48,9 +49,9 @@ export default function Canvas(props: CanvasProps) {
 	const [globalBrushColour, updateBrushColour] = useState(startingBrushColour);
 	const [globalBrushWidth, updateBrushWidth] = useState(startingBrushWidth);
 	const [globalBackgroundColour, updateBackgroundColour] = useState(startingBackgroundColour);
-	const [globalEraserState, updateEraserState] = useState(startingEraserState);
+	//const [globalEraserState, updateEraserState] = useState(startingEraserState);
 	const [movingCanvasState, updateMovingCanvasState] = useState(startingMovingCanvasState);
-	const [sliderVisibility, setSliderVisibility] = useState(startingSliderVisibility);
+	const [, setSliderVisibility] = useState(startingSliderVisibility);
 	
 	
     const [isPointerDown, setIsPointerDown] = useState(false);
@@ -62,11 +63,8 @@ export default function Canvas(props: CanvasProps) {
 	
 	
 	function drawStroke(stroke: Stroke) {
-		// console.log("drawing: " + JSON.stringify(stroke));
-		
 		// Check if context has been rendered
 		if (contextRef.current) {
-
 			//Loop through segments of the stroke being drawn, and draw each segment.
 			for (let segment of stroke.segments) {
 				// segment is [X, Y]
@@ -89,8 +87,8 @@ export default function Canvas(props: CanvasProps) {
 				contextRef.current.lineTo(segment.finish[0] - absoluteCanvasLocation[0], segment.finish[1] - absoluteCanvasLocation[1]);
 				contextRef.current.stroke();
 				contextRef.current.closePath();
-				contextRef.current.strokeStyle = stroke.globalBrushColour;
-				contextRef.current.lineWidth = stroke.globalBrushWidth;
+				contextRef.current.strokeStyle = stroke.strokeColour;
+				contextRef.current.lineWidth = stroke.strokeWidth;
 			}
 		}
 	}
@@ -191,7 +189,7 @@ export default function Canvas(props: CanvasProps) {
 			setPreviousX(e.clientX);
 			setPreviousY(e.clientY);
 			
-			contextRef.current.clearRect(0, 0, canvas.width, canvas.height);
+			contextRef.current.clearRect(0, 0, window.innerWidth, window.innerHeight);
 			for (const stroke of strokeHistory) {
 				drawStroke(stroke);
 			}
@@ -234,10 +232,11 @@ export default function Canvas(props: CanvasProps) {
 		}
 	}
 	
-	
+	/* Unfinished
 	const updateErasing = () => {
 		updateEraserState();
 	};
+	*/
 	
 	const sidebarDistanceFromLeft = 5;
 	const sidebarDistanceFromTop = 5;
@@ -263,7 +262,7 @@ export default function Canvas(props: CanvasProps) {
 		
 		<BrushWidthSliderHider
 			updateSliderVisibleFunction={setSliderVisibility}
-			initialWidth={globalBrushWidth}
+			initialWidth={globalBrushWidth.toString()}
 			updateBrushWidthFunction={updateBrushWidth}
 			sidebarDistanceFromTop={sidebarDistanceFromTop}
 			sidebarDistanceFromLeft={sidebarDistanceFromLeft}
@@ -305,7 +304,7 @@ export default function Canvas(props: CanvasProps) {
 				height: checkboxHeight,
 			}}
 		/>
-		
+		{/*
 		<EraserButton
 			initialEraserState={globalEraserState}
 			updateEraserStateFunction={updateErasing}
@@ -318,6 +317,7 @@ export default function Canvas(props: CanvasProps) {
 				height: checkboxHeight
 			}}
 		/>
+		*/}
 		
 		<SaveButton
 			saveCanvasFunction={saveCanvas}

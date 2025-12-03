@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BrushWidthSlider from './BrushWidthSlider.tsx';
+//import {Move} from './MoveCanvasToggle.tsx';
 
 
 type BrushWidthSliderHiderProps = {
@@ -14,7 +15,7 @@ type BrushWidthSliderHiderProps = {
 }
 
 
-function BrushWidthSliderHider(props: MoveCanvasToggleProps) {
+function BrushWidthSliderHider(props: BrushWidthSliderHiderProps) {
 	
 	const [visible, setVisibility] = useState(false);
 	
@@ -32,7 +33,7 @@ function BrushWidthSliderHider(props: MoveCanvasToggleProps) {
 	return (<>
 		<input type="checkbox"
 			id="brushWidthSliderHider"
-			value={visible}
+			value={visible.toString()}
 			onChange={onStateChange}
 			style={props.style}
 		/>

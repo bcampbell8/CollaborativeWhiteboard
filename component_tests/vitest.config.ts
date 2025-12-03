@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vitest/config'
 import { playwright } from '@vitest/browser-playwright'
 import react from '@vitejs/plugin-react'
