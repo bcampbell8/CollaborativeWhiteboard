@@ -39,12 +39,12 @@ function Host(props: HostProps) {
 	}
 
 	useEffect(() => {
-		console.log("address" + JSON.stringify(props.address));
-		fetch("http://" + props.address.hostname + ":2211/create")
+		console.log("Host address: " + JSON.stringify(props.address));
+		fetch("http://" + props.address + ":2211/create")
 			.then(response => response.json())
 			.then(incRoom => {
 				setRoom(incRoom);
-				let newWebsocket = new WebSocket('ws://' + props.address.hostname + `:${incRoom.socketNumber}`, 'echo-protocol');
+				let newWebsocket = new WebSocket('ws://' + props.address + `:${incRoom.socketNumber}`, 'echo-protocol');
 				newWebsocket.onopen = () => {
 					console.log('WebSocket connection established');
 				};

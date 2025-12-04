@@ -8,6 +8,7 @@ import RoomCodeText from './assets/RoomCodeText.tsx';
 
 type ParticipantProps = {
     address
+	roomcode
 };
 
 function Participant(props: ParticipantProps) {
@@ -42,7 +43,7 @@ function Participant(props: ParticipantProps) {
 
     useEffect(() => {
         let roomcode = props.address.pathname.split('/')[2];
-        fetch("http://" + props.address.hostname + ":2211/join", {
+        fetch("http://" + props.address + ":2211/join", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ roomcode: roomcode })
@@ -61,7 +62,7 @@ function Participant(props: ParticipantProps) {
 			}
 			setRecievedStroke(newStrokes);
 			setRoom(incRoom);
-			let newWebsocket = new WebSocket('ws://' + props.address.hostname + `:${incRoom.socketNumber}`, 'echo-protocol');
+			let newWebsocket = new WebSocket('ws://' + props.address + `:${incRoom.socketNumber}`, 'echo-protocol');
 			newWebsocket.onopen = () => {
 				console.log('WebSocket connection established');
 			};
@@ -81,7 +82,7 @@ function Participant(props: ParticipantProps) {
 			};
 		});
         /*
-        const newSocket = new WebSocket('ws://' + Address.hostname + ':2210', 'echo-protocol');
+        const newSocket = new WebSocket('ws://' + props.address + ':2210', 'echo-protocol');
         setSocket(newSocket);
 
         newSocket.onopen = () => {

@@ -15,12 +15,29 @@ function App() {
 		setServerAddress(input);
 		console.log("addr: " + serverAddress);
 	}
-	console.log("AppComp: " + serverAddress);
+	console.log("app serverAddr: " + serverAddress);
 	return (<>
 		<Routes>
-			<Route path="/" element={<Home address={serverAddress} updateServerAddress={middle} />} />
-			<Route path="/host" element={<Host address={serverAddress} />} />
-			<Route path="/participate/:code" element={<Participant address={serverAddress} />} />
+			<Route
+				path="/"
+				element={<Home
+					address={serverAddress}
+					updateServerAddress={middle}
+				/>}
+			/>
+			<Route
+				path="/host"
+				element={<Host
+					address={serverAddress}
+				/>}
+			/>
+			<Route
+				path="/participate/:code"
+				element={<Participant
+					address={serverAddress}
+					roomcode={"bruh"}
+				/>}
+			/>
 		</Routes>
 	</>);
 }
