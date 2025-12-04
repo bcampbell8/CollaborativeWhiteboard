@@ -5,7 +5,7 @@ import BrushWidthSliderHider from './BrushWidthSliderHider.tsx';
 import BackgroundColourButton from './BackgroundColourButton.tsx';
 //import EraserButton from './EraserButton.tsx';
 import SaveButton from './SaveButton.tsx';
-import CircularBuffer from './CircularBuffer.ts';
+import CircularBuffer from 'CircularBuffer.ts';
 
 export type CanvasProps = {
 	sendStroke: (stroke: Stroke) => void
