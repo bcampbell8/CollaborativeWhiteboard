@@ -25,7 +25,6 @@ const client = new MongoClient(MongoDbServerUrl);
 //Interface helps provide typing information for table and handling socket connections
 export interface Room {
     _id: string;
-    roomcode: string;
     socketNumber: number;
     strokeHistory: Array<Stroke>
     participants: Array<String>
@@ -39,8 +38,7 @@ export interface Room {
 export async function CreateRoomEntry(db: Db, roomcode: number, socket: number) : Promise<Room | null> {
     const collection = db.collection<Room>('Rooms');
     const room: Room = {
-        _id: "",
-        roomcode: `${roomcode}`,
+        _id: `${roomcode}`,
         socketNumber: socket,
         strokeHistory: [],
         participants: []
@@ -66,7 +64,7 @@ export async function UpdateHistory(db: Db, roomCode:string, incomingStroke: Str
     
     history.strokeHistory.push(incomingStroke);
     console.log(history);
-    collection.updateOne({roomcode: `${roomCode}`}, {
+    collection.updateOne({_id: `${roomCode}`}, {
         $set: {
             strokeHistory: history.strokeHistory
         }
@@ -78,7 +76,7 @@ export async function CloseRoom(db: Db, roomCode:string) : Promise<Room | null> 
     const collection = db.collection<Room>('Rooms');
     try{
         const room = await collection.findOneAndDelete(
-            {roomcode: `${roomCode}`}
+            {_id: `${roomCode}`}
 		);
         if (room === null) {
             throw new Error("Room not found.");
@@ -95,15 +93,15 @@ async function RetrieveRoomHistory(db: Db, roomCode: string): Promise<Room | nul
     const collection = db.collection<Room>('Rooms');
     try {
         const history = await collection.findOne<Room>(
-            {roomcode: `${roomCode}`}, {
+            {_id: `${roomCode}`}/*, {
                 //This exclusively retrieves the stroke history
                 projection: {_id: 0, strokeHistory: 1}
-            }
+            }*/
         );
+        console.log(history);
         if (history === null) {
              throw new Error("Room history not found."); 
         }
-        console.log("before database serves: "+history);
         return history;
     } catch (error) {
         console.log(error);
@@ -115,7 +113,7 @@ export async function JoinRequest(db: Db, roomCode: string): Promise<Room | null
     const collection = db.collection<Room>('Rooms');
     try {
         const room = await collection.findOne<Room>(
-            {roomcode: `${roomCode}`}
+            {_id: `${roomCode}`}
         );
         if (room === null) {
             throw new Error("Room not found.");
