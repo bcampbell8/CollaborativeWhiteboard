@@ -1,8 +1,9 @@
 import express, { raw } from 'express';
 import { WebSocket, WebSocketServer } from 'ws';
-import { MongoDbServerUrl, type Room } from './IWDB.js'
-import { CreateRoomEntry, JoinRequest, UpdateHistory, CloseRoom } from './IWDB.js'
+import { MongoDbServerUrl, type Room } from './IWDB.ts'
+import { CreateRoomEntry, JoinRequest, UpdateHistory, CloseRoom } from './IWDB.ts'
 import { Db, MongoClient } from 'mongodb';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import cors from 'cors';
 
 //!!To have protoserver work you'll need to run a mongod process!
@@ -11,20 +12,27 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const mongoUrl = MongoDbServerUrl;
-const client = new MongoClient(mongoUrl)
-client.connect();
-let IWDB: Db;
-console.log("Db client connected");
-try {
-    IWDB = client.db("Rooms");
-    console.log("Connection to IWDB database successful");
-    const collection = IWDB.collection<Room>('Rooms');
-    collection.drop();
-    console.log("Rooms table reset.");
-} catch (error) {
-    console.log(error);
+var IWDB: Db;
+async function startMongo() {
+	// const mongoUrl = MongoDbServerUrl;
+	const mongoServer = await MongoMemoryServer.create();
+	const client = new MongoClient(mongoServer.getUri())
+	client.connect();
+	console.log("Db client connected");
+	try {
+		IWDB = client.db("Rooms");
+		console.log("Connection to IWDB database successful");
+		const collection = IWDB.collection<Room>('Rooms');
+		collection.drop();
+		console.log("Rooms table reset.");
+	} catch (error) {
+		console.log(error);
+	}
+	// console.log(mongoServer);
+	// console.log(mongoServer.instanceInfo.port);
+	// console.log();
 }
+startMongo();
 
 //Seed room code generator
 let roomcodeGen: number = 0;

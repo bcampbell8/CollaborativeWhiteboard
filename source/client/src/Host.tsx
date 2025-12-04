@@ -6,8 +6,11 @@ import RoomCodeText from './assets/RoomCodeText.tsx';
 import type { Room } from '../../server/IWDB.ts'
 
 
+type HostProps = {
+    address
+};
 
-function Host() {
+function Host(props: HostProps) {
 
 	const [room, setRoom] = useState<Room>();
 	const [contextRef, setContextRef] = useState();
@@ -36,11 +39,12 @@ function Host() {
 	}
 
 	useEffect(() => {
-		fetch("http://" + window.location.hostname + ":2211/create")
+		console.log("address" + JSON.stringify(props.address));
+		fetch("http://" + props.address.hostname + ":2211/create")
 			.then(response => response.json())
 			.then(incRoom => {
 				setRoom(incRoom);
-				let newWebsocket = new WebSocket('ws://' + window.location.hostname + `:${incRoom.socketNumber}`, 'echo-protocol');
+				let newWebsocket = new WebSocket('ws://' + props.address.hostname + `:${incRoom.socketNumber}`, 'echo-protocol');
 				newWebsocket.onopen = () => {
 					console.log('WebSocket connection established');
 				};

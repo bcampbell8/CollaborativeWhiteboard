@@ -6,8 +6,11 @@ import type { Room } from '../../server/IWDB.ts';
 import RoomCodeText from './assets/RoomCodeText.tsx';
 
 
+type ParticipantProps = {
+    address
+};
 
-function Participant() {
+function Participant(props: ParticipantProps) {
 
     //const { code } = useParams();
     //const roomCode = decodeURIComponent(code);
@@ -30,8 +33,6 @@ function Participant() {
     }
 
     function socketOnMessage(event: any) {
-        // This is probably quite scuffed and there needs to be more done such as updating stroke history etc.
-        //What about if my colour / thickness is different?
         const message = JSON.parse(event.data);
         const messageHeader = message.action;
         if (messageHeader === "Update") {
@@ -40,8 +41,8 @@ function Participant() {
     }
 
     useEffect(() => {
-        let roomcode = window.location.pathname.split('/')[2];
-        fetch("http://" + window.location.hostname + ":2211/join", {
+        let roomcode = props.address.pathname.split('/')[2];
+        fetch("http://" + props.address.hostname + ":2211/join", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ roomcode: roomcode })
@@ -60,7 +61,7 @@ function Participant() {
 			}
 			setRecievedStroke(newStrokes);
 			setRoom(incRoom);
-			let newWebsocket = new WebSocket('ws://' + window.location.hostname + `:${incRoom.socketNumber}`, 'echo-protocol');
+			let newWebsocket = new WebSocket('ws://' + props.address.hostname + `:${incRoom.socketNumber}`, 'echo-protocol');
 			newWebsocket.onopen = () => {
 				console.log('WebSocket connection established');
 			};
@@ -80,7 +81,7 @@ function Participant() {
 			};
 		});
         /*
-        const newSocket = new WebSocket('ws://' + window.location.hostname + ':2210', 'echo-protocol');
+        const newSocket = new WebSocket('ws://' + Address.hostname + ':2210', 'echo-protocol');
         setSocket(newSocket);
 
         newSocket.onopen = () => {

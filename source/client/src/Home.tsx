@@ -3,11 +3,16 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 
-function Home() {
+type HomeProps = {
+    address: string
+    updateServerAddress: (value) => void
+};
+
+function Home(props: HomeProps) {
 	
 	const [formdata, setFormData] = useState({ code: "" });
 	
-	const handleChange = (e) => {
+	const handleChangeCode = (e) => {
 		const { code, value } = e.target;
 		setFormData({
 			...formdata,
@@ -15,18 +20,21 @@ function Home() {
 		});
 	};
 	
-	async function handleSubmit(e: FormData) {
-		//e.preventDefault();
-		const roomFormcode = e.get("code");
-		console.log(roomFormcode);
+	const handleChangeIp = (e) => {
+		
+		const { ip, value } = e.target;
+		setFormData({
+			...formdata,
+			ip: value
+		});
+	};
+	
+	async function handleSubmitParticipant() {
+		const roomFormcode = formdata.code;
+		props.updateServerAddress(formdata.ip);
 		// console.log(JSON.stringify(formdata));
 		
-		// let roomExists = await fetch("http://" + window.location.hostname + ":2211/verifyroom");
-		// if (roomExists == "false") {
-			// return false; // idk what to do rn to indicate to the user that a room does not exist
-		// }
-		
-		const response = await fetch("http://" + window.location.hostname + ":2211/findroom",{
+		const response = await fetch("http://" + formdata.ip + ":2211/findroom",{
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
@@ -35,23 +43,56 @@ function Home() {
 		});
 		const roomExists = await response.json();
 
-		if (roomExists){
+		if (roomExists) {
 			window.location.href = `/participate/${encodeURIComponent(formdata.code)}`;
 		}
+	}
+	
+	async function handleSubmitHost() {
+		// console.log("paddress0: " + JSON.stringify(props.address) + "  ip: " + e.get("ip"));
 		
-	};
+		const roomFormcode = formdata.code;
+		
+		// console.log("formdata: " + JSON.stringify(formdata));
+		// console.log("formdata ip: " + formdata.ip);
+		props.updateServerAddress(formdata.ip);
+		// console.log("paddress no strgfy: " + props.address);
+		// console.log("paddress1: " + JSON.stringify(props.address));
+		
+		const response = await fetch("http://" + formdata.ip + ":2211/create");
+		// const roomExists = await response.json();
+
+		// if (roomExists) {
+			// redirect to /host
+		// }
+		window.location.href = "/host";
+	}
 	
 	return (<>
 		<nav style={{
 			justifyContent: "center"
 		}}>
-			<Link to={"/host"}>Host a room</Link>
-			<form action={handleSubmit}>
+			<form action={handleSubmitHost}>
+				<input
+					type="text"
+					name="ip"
+					value={formdata.ip}
+					onChange={handleChangeIp}
+				/>
+				<input type="submit" value="Host" />
+			</form>
+			<form action={handleSubmitParticipant}>
+				<input 
+					type="text"
+					name="ip"
+					value={formdata.ip}
+					onChange={handleChangeIp}
+				/>
 				<input
 					type="text"
 					name="code"
 					value={formdata.code}
-					onChange={handleChange}
+					onChange={handleChangeCode}
 				/>
 				<input type="submit" value="Join" />
 			</form>
@@ -60,3 +101,8 @@ function Home() {
 }
 
 export default Home;
+
+
+
+
+
