@@ -111,7 +111,7 @@ function Participant() {
             recievedStroke={recievedStroke}
         />
 
-        {room && <RoomCodeText text={`roomcode: ${room.roomcode} port: ${room.socketNumber} `} />}
+        {room && <RoomCodeText text={`roomcode: ${room._id} port: ${room.socketNumber} `} />}
     </>)
 }
 
