@@ -63,8 +63,8 @@ app.get("/create", async (req, res) => {
 
         ws.on('message', async (message) => {
             let parsedMsg = JSON.parse(message);
-            let stroke = await UpdateHistory(IWDB, parsedMsg.room.roomcode, parsedMsg.strokeToDraw);
-            console.log("after database call: " + stroke);
+            let stroke = await UpdateHistory(IWDB, parsedMsg.room._id, parsedMsg.strokeToDraw);
+            //console.log("after database call: " + stroke);
             // if (message.request && message.request == "roomcode") {
             // ws.send(JSON.stringify({ response: "roomcode", code: createNewCode() }));
             // return;
@@ -104,6 +104,7 @@ app.post("/join", async (req, res) => {
 app.post("/findroom", async (req, res) => {
     console.log("Incoming find request on /findroom! ");
     let roomcode = req.body.roomcode;
+    console.log(req.body.roomcode);
     let roomExists = false;
     let room = await JoinRequest(IWDB, roomcode);
     if (room) {
