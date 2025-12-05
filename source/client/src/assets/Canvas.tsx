@@ -12,7 +12,7 @@ export type CanvasProps = {
 	recievedStroke: Array<Stroke> // Receives an array of strokes to redraw the canvas.
 }
 
-const strokeBufferSize = 10;
+const strokeBufferSize = 500;
 const startingBrushColour = "#111111";
 const startingBrushWidth = 5;
 const startingBackgroundColour = "#F6F6F6";
