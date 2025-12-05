@@ -1,14 +1,6 @@
 
 Interactive Whiteboard Answers
 
-Key: numbers listed are questions which have not been completed, parts listed have not been started
-Numbers in brackets by parts are the number of questions in that part.
-A question answered with "done" means it was written directly into the word document.
-A question mark next to a question number indicates the question is mostly done (just requires
-screenshots be taken or minor adjustments be made)
-
-
-implement circular buffer
 
 
 1.1

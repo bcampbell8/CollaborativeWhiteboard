@@ -12,6 +12,7 @@ export type CanvasProps = {
 	recievedStroke: Array<Stroke> // Receives an array of strokes to redraw the canvas.
 }
 
+const strokeBufferSize = 10;
 const startingBrushColour = "#111111";
 const startingBrushWidth = 5;
 const startingBackgroundColour = "#F6F6F6";
@@ -60,8 +61,7 @@ export default function Canvas(props: CanvasProps) {
     const contextRef = useRef<CanvasRenderingContext2D>(null);
     const [lineSegment, setLineSegment] = useState<LineSegment | null>(null);
     const [stroke, setStroke] = useState<Stroke | null>(null);
-    const [strokeHistory, setStrokeHistory] = useState<Array<Stroke>>([]);
-    const [buffer, setBuffer] = useState<CircularBuffer>(null);
+    const [buffer, setBuffer] = useState<CircularBuffer<Stroke>>(new CircularBuffer<Stroke>(strokeBufferSize));
     
     
 	function drawStroke(stroke: Stroke) {
@@ -100,23 +100,29 @@ export default function Canvas(props: CanvasProps) {
 		const canvas = canvasRef.current as HTMLCanvasElement;
         const context = canvas.getContext("2d");
         contextRef.current = context;
+		// console.log("uLE: " + props.recievedStroke);
 		
-        //Updates canvas whenevr a stroke is received
-		let updatedStrokeHistory: Array<Stroke> = strokeHistory;
-		if (!props.recievedStroke){
+		// Check if there is something to draw
+		if (!props.recievedStroke) {
+			// console.log("none p.S");
 			return;
 		}
+		
+        // Updates canvas whenevr a stroke is received
+		let updatedBuffer: CircularBuffer<Stroke> = buffer;
 
 		// If a new stroke has been received, update the stroke history
 		if(props.recievedStroke && props.recievedStroke.length > 0) {
-			console.log(props.recievedStroke)
-			strokeHistory.push(...props.recievedStroke);
+			// console.log("p.rS &&: " + props.recievedStroke);
+			for (const item of props.recievedStroke) {
+				buffer.write(item);
+			}
 		}
 		// Update the stroke history, then redraw the canvas.
-		setStrokeHistory(updatedStrokeHistory);
-		strokeHistory.map(e => drawStroke(e))
+		setBuffer(updatedBuffer);
+		buffer.readAll().map(e => drawStroke(e));
 
-        //Need to include the props here in dependency array
+        // Need to include the props here in dependency array
 	}, [props.recievedStroke]);
 	
 	
@@ -192,7 +198,7 @@ export default function Canvas(props: CanvasProps) {
 			setPreviousY(e.clientY);
 			
 			contextRef.current.clearRect(0, 0, window.innerWidth, window.innerHeight);
-			for (const stroke of strokeHistory) {
+			for (const stroke of buffer.readAll()) {
 				drawStroke(stroke);
 			}
 		}
@@ -213,13 +219,13 @@ export default function Canvas(props: CanvasProps) {
 				setLineSegment(oldLineSegment);
 				stroke?.segments.push(lineSegment);
 			}
-			let updatedStrokeHistory: Array<Stroke> = strokeHistory;
+			let updatedBuffer: CircularBuffer<Stroke> = buffer;
 			if (!stroke){
 				return;
 			}
-			updatedStrokeHistory.push(stroke);
-			setStrokeHistory(updatedStrokeHistory);
-			// console.log(strokeHistory);
+			// updatedBuffer.write(stroke);
+			setBuffer(updatedBuffer);
+			// console.log(buffer);
 			props.sendStroke(stroke);
 		}
     }
@@ -264,12 +270,15 @@ export default function Canvas(props: CanvasProps) {
 		
 		<BrushWidthSliderHider
 			updateSliderVisibleFunction={setSliderVisibility}
+			
 			initialWidth={globalBrushWidth.toString()}
 			updateBrushWidthFunction={updateBrushWidth}
+			
 			sidebarDistanceFromTop={sidebarDistanceFromTop}
 			sidebarDistanceFromLeft={sidebarDistanceFromLeft}
 			checkboxHeight={checkboxHeight}
 			checkboxWidth={checkboxWidth}
+			
 			style={{
 				position: "absolute",
 				top: (sidebarDistanceFromTop + checkboxHeight) + "px",
