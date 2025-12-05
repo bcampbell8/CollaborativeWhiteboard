@@ -11,11 +11,6 @@ screenshots be taken or minor adjustments be made)
 implement circular buffer
 
 
-ip address input for apk
-. config file that has the address
-. revert to 09450e37869acd1c1c9b073078e9046cc4994662
-
-
 1.1
 Responsive design, iconography, and performance optimisation are three web design techniques for hand-held
 devices. Responsive design means the design doesn't just work on a mobile device, it changes to make the
