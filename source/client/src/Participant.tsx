@@ -42,7 +42,8 @@ function Participant(props: ParticipantProps) {
     }
 
     useEffect(() => {
-        let roomcode = props.address.pathname.split('/')[2];
+		console.log(props.address);
+        let roomcode = window.location.pathname.split('/')[2];
         fetch("http://" + props.address + ":2211/join", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -113,7 +114,7 @@ function Participant(props: ParticipantProps) {
             recievedStroke={recievedStroke}
         />
 
-        {room && <RoomCodeText text={`roomcode: ${room.roomcode} port: ${room.socketNumber} `} />}
+        {room && <RoomCodeText text={`roomcode: ${room._id} port: ${room.socketNumber} `} />}
     </>)
 }
 

@@ -44,7 +44,11 @@ function Host(props: HostProps) {
 			.then(response => response.json())
 			.then(incRoom => {
 				setRoom(incRoom);
-				let newWebsocket = new WebSocket('ws://' + props.address + `:${incRoom.socketNumber}`, 'echo-protocol');
+				// console.log("incRoom: " + JSON.stringify(incRoom));
+				let newWebsocket = new WebSocket(
+					'ws://' + props.address + `:${incRoom.socketNumber}`,
+					'echo-protocol'
+				);
 				newWebsocket.onopen = () => {
 					console.log('WebSocket connection established');
 				};
@@ -73,7 +77,7 @@ function Host(props: HostProps) {
 			sendStroke={sendStroke}
 			recievedStroke={recievedStroke}
 		/>
-		{room && <RoomCodeText text={`roomcode: ${room.roomcode} port: ${room.socketNumber} `} />}
+		{room && <RoomCodeText text={`roomcode: ${room._id} port: ${room.socketNumber} `} />}
 	</>)
 }
 

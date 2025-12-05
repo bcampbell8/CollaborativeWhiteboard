@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 
 type HomeProps = {
     address: string
-    updateServerAddress: (value) => void
 };
 
 function Home(props: HomeProps) {
@@ -31,10 +30,9 @@ function Home(props: HomeProps) {
 	
 	async function handleSubmitParticipant() {
 		const roomFormcode = formdata.code;
-		props.updateServerAddress(formdata.ip);
-		// console.log(JSON.stringify(formdata));
+		console.log(JSON.stringify(formdata));
 		
-		const response = await fetch("http://" + formdata.ip + ":2211/findroom",{
+		const response = await fetch("http://" + props.address + ":2211/findroom",{
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
@@ -55,11 +53,10 @@ function Home(props: HomeProps) {
 		
 		// console.log("formdata: " + JSON.stringify(formdata));
 		// console.log("formdata ip: " + formdata.ip);
-		props.updateServerAddress(formdata.ip);
 		// console.log("paddress no strgfy: " + props.address);
 		// console.log("paddress1: " + JSON.stringify(props.address));
 		
-		const response = await fetch("http://" + formdata.ip + ":2211/create");
+		const response = await fetch("http://" + props.address + ":2211/create");
 		// const roomExists = await response.json();
 
 		// if (roomExists) {
@@ -72,22 +69,8 @@ function Home(props: HomeProps) {
 		<nav style={{
 			justifyContent: "center"
 		}}>
-			<form action={handleSubmitHost}>
-				<input
-					type="text"
-					name="ip"
-					value={formdata.ip}
-					onChange={handleChangeIp}
-				/>
-				<input type="submit" value="Host" />
-			</form>
+			<Link to="/host">Host a room</Link>
 			<form action={handleSubmitParticipant}>
-				<input 
-					type="text"
-					name="ip"
-					value={formdata.ip}
-					onChange={handleChangeIp}
-				/>
 				<input
 					type="text"
 					name="code"
