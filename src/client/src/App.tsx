@@ -29,7 +29,6 @@ function App() {
 				path="/participate/:code"
 				element={<Participant
 					address={serverAddress}
-					roomcode={"bruh"}
 				/>}
 			/>
 		</Routes>

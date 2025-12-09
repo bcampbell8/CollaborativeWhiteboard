@@ -6,11 +6,14 @@
 ###########################################
 
 
+node_modules/
+
+
+
 # ignore personal notes
 PersonalNotes.*
 
-
-node_modules/
+experimentation/
 
 
 

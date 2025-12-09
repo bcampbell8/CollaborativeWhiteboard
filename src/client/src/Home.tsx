@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-//import type { ReactFormState } from 'react-dom/client';
 import { Link } from 'react-router-dom';
 
 
-type HomeProps = {
+export type HomeProps = {
     address: string
 };
 
-function Home(props: HomeProps) {
+export default function Home(props: HomeProps) {
 	
 	const [formdata, setFormData] = useState({ code: "" });
 	
@@ -47,21 +46,8 @@ function Home(props: HomeProps) {
 	}
 	
 	async function handleSubmitHost() {
-		// console.log("paddress0: " + JSON.stringify(props.address) + "  ip: " + e.get("ip"));
-		
 		const roomFormcode = formdata.code;
-		
-		// console.log("formdata: " + JSON.stringify(formdata));
-		// console.log("formdata ip: " + formdata.ip);
-		// console.log("paddress no strgfy: " + props.address);
-		// console.log("paddress1: " + JSON.stringify(props.address));
-		
 		const response = await fetch("http://" + props.address + ":2211/create");
-		// const roomExists = await response.json();
-
-		// if (roomExists) {
-			// redirect to /host
-		// }
 		window.location.href = "/host";
 	}
 	
@@ -83,7 +69,6 @@ function Home(props: HomeProps) {
 	</>)
 }
 
-export default Home;
 
 
 

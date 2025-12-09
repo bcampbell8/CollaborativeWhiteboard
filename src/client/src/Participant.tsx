@@ -4,19 +4,16 @@ import Canvas from './assets/Canvas.tsx';
 import type { Stroke } from './assets/Canvas.tsx';
 import type { Room } from '../../server/IWDB.ts';
 import RoomCodeText from './assets/RoomCodeText.tsx';
+import WebSocketFactory from './WebSocketFactory.ts';
 
 
-type ParticipantProps = {
-    address
-	roomcode
+export type ParticipantProps = {
+    address: string
 };
 
-function Participant(props: ParticipantProps) {
+export default function Participant(props: ParticipantProps) {
 
-    //const { code } = useParams();
-    //const roomCode = decodeURIComponent(code);
     const [room, setRoom] = useState<Room>();
-    //const [lineInfo, setLineInfo] = useState({});
     const [contextRef, setContextRef] = useState();
     const [socket, setSocket] = useState<WebSocket>();
     const [recievedStroke, setRecievedStroke] = useState([]);
@@ -42,7 +39,6 @@ function Participant(props: ParticipantProps) {
     }
 
     useEffect(() => {
-		console.log(props.address);
         let roomcode = window.location.pathname.split('/')[2];
         fetch("http://" + props.address + ":2211/join", {
             method: "POST",
@@ -53,58 +49,16 @@ function Participant(props: ParticipantProps) {
 		.then(incRoom => {
 			let i = 0;
 			
-			//setRecievedStroke(incRoom)
 			const newStrokes = recievedStroke.concat([]);
 			for(let stroke of incRoom.strokeHistory){
 				console.log(`stroke: ${i}`);
 				newStrokes.push(stroke);
-				//setRecievedStroke(stroke);//replaces the old one here
 				i++;
 			}
 			setRecievedStroke(newStrokes);
 			setRoom(incRoom);
-			let newWebsocket = new WebSocket('ws://' + props.address + `:${incRoom.socketNumber}`, 'echo-protocol');
-			newWebsocket.onopen = () => {
-				console.log('WebSocket connection established');
-			};
-
-			newWebsocket.onmessage = socketOnMessage;
-
-			newWebsocket.onclose = () => {
-				console.log('WebSocket connection closed');
-			};
-
-			newWebsocket.onerror = (error) => {
-				console.error('WebSocket error:', error);
-			};
-			setSocket(newWebsocket);
-			return () => {
-				newWebsocket.close();
-			};
+			let newWebsocket = WebSocketFactory(incRoom, props.address, setSocket, setRecievedStroke);
 		});
-        /*
-        const newSocket = new WebSocket('ws://' + props.address + ':2210', 'echo-protocol');
-        setSocket(newSocket);
-
-        newSocket.onopen = () => {
-            console.log('WebSocket connection established');
-        };
-
-        newSocket.onmessage = socketOnMessage;
-
-        newSocket.onclose = () => {
-            console.log('WebSocket connection closed');
-        };
-
-        newSocket.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
-
-        return () => {
-            newSocket.close();
-        };
-        */
-
     }, []);
 
 
@@ -118,7 +72,6 @@ function Participant(props: ParticipantProps) {
     </>)
 }
 
-export default Participant;
 
 
 
