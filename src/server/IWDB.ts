@@ -3,7 +3,7 @@ import type { Stroke } from '../client/src/assets/Canvas.tsx'
 import config from './app.config.ts';
 
 
-const MongoDbServerUrl = config.mongod_server_ip;
+const MongoDbServerUrl = 'mongodb://' + config.mongod_server_ip + ':' + config.mongod_server_port;
 export { MongoDbServerUrl };
 
 const client = new MongoClient(MongoDbServerUrl);
@@ -20,10 +20,16 @@ export interface Room {
 /**
  * Recieves the Db, a roomcode, and a socket number and asynchronously creates a new record
  * for the room.
+ * 
+ * @param db - the database object to operate on
+ * @param roomcode - the room code for this room
+ * @param socket - port number for the socket of the new room
+ * @returns A room object or null if the operation was unsuccessful
+ * 
  * @author BCampbell
  */
 export async function CreateRoomEntry(db: Db, roomcode: number, socket: number) : Promise<Room | null> {
-    const collection = db.collection<Room>('Rooms');
+a    const collection = db.collection<Room>('Rooms');
     const room: Room = {
         _id: `${roomcode}`,
         socketNumber: socket,
@@ -102,7 +108,7 @@ export async function JoinRequest(db: Db, roomCode: string): Promise<Room | null
             {_id: `${roomCode}`}
         );
         if (room === null) {
-            throw new Error("Room not found.");
+            return null;
         }
         return room;
     } catch (error) {

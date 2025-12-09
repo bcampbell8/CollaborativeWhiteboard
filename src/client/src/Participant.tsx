@@ -40,7 +40,7 @@ export default function Participant(props: ParticipantProps) {
 
     useEffect(() => {
         let roomcode = window.location.pathname.split('/')[2];
-        fetch("http://" + props.address + ":2211/join", {
+        fetch("http://" + props.address + ":2211/findroom", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ roomcode: roomcode })
@@ -51,7 +51,6 @@ export default function Participant(props: ParticipantProps) {
 			
 			const newStrokes = recievedStroke.concat([]);
 			for(let stroke of incRoom.strokeHistory){
-				console.log(`stroke: ${i}`);
 				newStrokes.push(stroke);
 				i++;
 			}

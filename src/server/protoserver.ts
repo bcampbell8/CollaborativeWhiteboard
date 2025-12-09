@@ -14,12 +14,13 @@ app.use(express.json());
 
 var IWDB: Db;
 async function startMongo() {
+	let mongodUrl = MongoDbServerUrl;
 	if (!config.use_persistent_db) {
 		const mongoServer = await MongoMemoryServer.create();
-		MongoDbServerUrl = mongoServer.getUri();
+		mongodUrl = mongoServer.getUri();
 	}
 	
-	const client = new MongoClient(MongoDbServerUrl)
+	const client = new MongoClient(mongodUrl)
 	client.connect();
 	console.log("Db client connected");
 	try {
@@ -56,7 +57,12 @@ function createNewCode() {
 
 
 /**
- * CreateRoom endpoint for the REST API - called to create a new room
+ * Endpoint called to create a new room
+ * 
+ * @remarks
+ * Handles setting up a room in the database, and setting up the websocket server.
+ * Returns status 200 and a room object in the response body.
+ * 
  * @author BCampbell
  */
 app.get("/create", async (req, res) => {
@@ -87,33 +93,25 @@ app.get("/create", async (req, res) => {
 });
 
 /**
- * Join endpoint for the REST API - only called when room has been verified to exist
- * @author BCampbell
- */
-app.post("/join", async (req, res) => {
-    console.log("Incoming join request on /join!");
-    let roomcode = req.body.roomcode;
-    let room = await JoinRequest(IWDB, roomcode);
-    res.send(room).status(200);
-});
-
-/**
- * FindRoom endpoint for the REST API - verifies a room exists and returns a JSON object
- * containing the info about the room.
+ * FindRoom endpoint verifies a room exists and returns a room JSON object containing the info about the room.
+ * 
+ * @remarks
+ * Since endpoints don't strictly take parameters or return values, this endpoint receives a request and
+ * returns status 200 with a room object in the response body, or status 404 with null as the request body
+ * 
  * @author BCampbell
  */
 app.post("/findroom", async (req, res) => {
     console.log("Incoming find request on /findroom! ");
     let roomcode = req.body.roomcode;
-    console.log(req.body.roomcode);
-    let roomExists = false;
+    console.log("code: " + req.body.roomcode);
     let room = await JoinRequest(IWDB, roomcode);
     if (room) {
-        roomExists = true;
-        res.send(roomExists).status(200);
+        res.status(200).send(room);
     }
     else {
-        res.status(404).send(roomExists);
+		// should send null   vvv
+        res.status(404).send(room);
     }
 });
 
