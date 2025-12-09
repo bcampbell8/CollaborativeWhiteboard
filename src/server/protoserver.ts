@@ -4,9 +4,9 @@ import { MongoDbServerUrl, type Room } from './IWDB.ts'
 import { CreateRoomEntry, JoinRequest, UpdateHistory, CloseRoom } from './IWDB.ts'
 import { Db, MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import config from './app.config.ts';
 import cors from 'cors';
 
-//!!To have protoserver work you'll need to run a mongod process!
 
 const app = express();
 app.use(cors());
@@ -14,9 +14,12 @@ app.use(express.json());
 
 var IWDB: Db;
 async function startMongo() {
-	// const mongoUrl = MongoDbServerUrl;
-	const mongoServer = await MongoMemoryServer.create();
-	const client = new MongoClient(mongoServer.getUri())
+	if (!config.use_persistent_db) {
+		const mongoServer = await MongoMemoryServer.create();
+		MongoDbServerUrl = mongoServer.getUri();
+	}
+	
+	const client = new MongoClient(MongoDbServerUrl)
 	client.connect();
 	console.log("Db client connected");
 	try {
@@ -28,9 +31,6 @@ async function startMongo() {
 	} catch (error) {
 		console.log(error);
 	}
-	// console.log(mongoServer);
-	// console.log(mongoServer.instanceInfo.port);
-	// console.log();
 }
 startMongo();
 
@@ -72,12 +72,6 @@ app.get("/create", async (req, res) => {
         ws.on('message', async (message) => {
             let parsedMsg = JSON.parse(message);
             let stroke = await UpdateHistory(IWDB, parsedMsg.room._id, parsedMsg.strokeToDraw);
-            //console.log("after database call: " + stroke);
-            // if (message.request && message.request == "roomcode") {
-            // ws.send(JSON.stringify({ response: "roomcode", code: createNewCode() }));
-            // return;
-            // }
-
             //Broadcast message to all connected clients
             wss.clients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {
@@ -90,7 +84,6 @@ app.get("/create", async (req, res) => {
             console.log('Client disconnected');
         });
     });
-    // console.log(`New room open on:${socketGen} `);
 });
 
 /**
@@ -124,9 +117,9 @@ app.post("/findroom", async (req, res) => {
     }
 });
 
-const httpport = 2211;
-app.listen(httpport, () => {
-    console.log(`HTTP server is listening on port ${httpport}`);
+const HTTPPORT = 2211;
+app.listen(HTTPPORT, () => {
+    console.log(`HTTP server is listening on port ${HTTPPORT}`);
 });
 
 

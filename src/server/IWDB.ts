@@ -1,26 +1,13 @@
 import { Db, MongoClient } from 'mongodb';
 import type { Stroke } from '../client/src/assets/Canvas.tsx'
+import config from './app.config.ts';
 
 
-
-// probably will need to change the url at some point from localhost?
-// sorry for changing it  -D
-const MongoDbServerUrl = 'mongodb://localhost:27017';
+const MongoDbServerUrl = config.mongod_server_ip;
 export { MongoDbServerUrl };
 
 const client = new MongoClient(MongoDbServerUrl);
 
-//Provide reference name for database and table (collection)
-//const dbName = 'IWDB';
-
-
-//Create hash map that maps protocol actions to associated functions
-// const actionMap = {
-//     "Create": CreateRoomEntry,
-//     "Join": JoinRequest,
-//     "Update": UpdateHistory,
-//     "Close": CloseRoom
-// }
 
 //Interface helps provide typing information for table and handling socket connections
 export interface Room {
@@ -88,7 +75,6 @@ export async function CloseRoom(db: Db, roomCode:string) : Promise<Room | null> 
     }
 }
 
-//was returning Stroke[]
 async function RetrieveRoomHistory(db: Db, roomCode: string): Promise<Room | null> {
     const collection = db.collection<Room>('Rooms');
     try {
