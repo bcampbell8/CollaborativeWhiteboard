@@ -1,7 +1,7 @@
 import express, { raw } from 'express';
 import { WebSocket, WebSocketServer } from 'ws';
 import { MongoDbServerUrl, type Room } from './IWDB.ts'
-import { CreateRoomEntry, JoinRequest, UpdateHistory, CloseRoom } from './IWDB.ts'
+import { CreateRoomEntry, RoomSearch, UpdateHistory, CloseRoom } from './IWDB.ts'
 import { Db, MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import config from './app.config.ts';
@@ -46,9 +46,15 @@ function createNewCode() {
     let output = "";
     let characters = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
     let charlen = characters.length;
-    for (let i = 0; i < 6; i++) {
-        output += characters[Math.floor(Math.random() * charlen)];
-    }
+    //Do while loop initialises a code to search against the database.
+    //It will keep generating codes until it finds one that isn't in the database
+    //(I.e a null result on RoomSearch)
+    do{
+        for (let i = 0; i < 6; i++) {
+            output += characters[Math.floor(Math.random() * charlen)];
+        }
+    } while(RoomSearch(IWDB, output) !== null)
+    
 
     // add roomcode to db
 
@@ -105,7 +111,7 @@ app.post("/findroom", async (req, res) => {
     console.log("Incoming find request on /findroom! ");
     let roomcode = req.body.roomcode;
     console.log("code: " + req.body.roomcode);
-    let room = await JoinRequest(IWDB, roomcode);
+    let room = await RoomSearch(IWDB, roomcode);
     if (room) {
         res.status(200).send(room);
     }
