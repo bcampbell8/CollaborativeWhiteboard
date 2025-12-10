@@ -29,7 +29,7 @@ export interface Room {
  * @author BCampbell
  */
 export async function CreateRoomEntry(db: Db, roomcode: number, socket: number) : Promise<Room | null> {
-a    const collection = db.collection<Room>('Rooms');
+    const collection = db.collection<Room>('Rooms');
     const room: Room = {
         _id: `${roomcode}`,
         socketNumber: socket,
@@ -50,19 +50,19 @@ a    const collection = db.collection<Room>('Rooms');
 
 export async function UpdateHistory(db: Db, roomCode:string, incomingStroke: Stroke) : Promise<Stroke[] | null> {
     const collection = db.collection<Room>('Rooms');
-    const history = await RetrieveRoomHistory(db, roomCode);
-    if (history === null) {
+    const room = await RoomSearch(db, roomCode);
+    if (room === null) {
         return null
     }
     
-    history.strokeHistory.push(incomingStroke);
-    console.log(history);
+    room.strokeHistory.push(incomingStroke);
+    console.log(room);
     collection.updateOne({_id: `${roomCode}`}, {
         $set: {
-            strokeHistory: history.strokeHistory
+            strokeHistory: room.strokeHistory
         }
     });
-    return history.strokeHistory;
+    return room.strokeHistory;
 }
 
 export async function CloseRoom(db: Db, roomCode:string) : Promise<Room | null> {
@@ -81,27 +81,7 @@ export async function CloseRoom(db: Db, roomCode:string) : Promise<Room | null> 
     }
 }
 
-async function RetrieveRoomHistory(db: Db, roomCode: string): Promise<Room | null> {
-    const collection = db.collection<Room>('Rooms');
-    try {
-        const history = await collection.findOne<Room>(
-            {_id: `${roomCode}`}/*, {
-                //This exclusively retrieves the stroke history
-                projection: {_id: 0, strokeHistory: 1}
-            }*/
-        );
-        console.log(history);
-        if (history === null) {
-             throw new Error("Room history not found."); 
-        }
-        return history;
-    } catch (error) {
-        console.log(error);
-        return null;
-    }
-}
-
-export async function JoinRequest(db: Db, roomCode: string): Promise<Room | null> {
+export async function RoomSearch(db: Db, roomCode: string): Promise<Room | null> {
     const collection = db.collection<Room>('Rooms');
     try {
         const room = await collection.findOne<Room>(
