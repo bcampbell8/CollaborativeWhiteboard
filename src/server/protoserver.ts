@@ -42,7 +42,7 @@ let roomcodeGen: number = 0;
 let socketGen: number = 7000;
 
 
-function createNewCode() {
+async function createNewCode(): Promise<String> {
     let output = "";
     let characters = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
     let charlen = characters.length;
@@ -50,10 +50,12 @@ function createNewCode() {
     //It will keep generating codes until it finds one that isn't in the database
     //(I.e a null result on RoomSearch)
     do{
+        output = "";
         for (let i = 0; i < 6; i++) {
             output += characters[Math.floor(Math.random() * charlen)];
         }
-    } while(RoomSearch(IWDB, output) !== null)
+        console.log("here's the gen'd code: "+output);
+    } while(await RoomSearch(IWDB, output) !== null)
     
 
     // add roomcode to db
@@ -73,9 +75,10 @@ function createNewCode() {
  */
 app.get("/create", async (req, res) => {
     console.log("Incoming request on /create!");
-    roomcodeGen++;
+    let roomCode = await createNewCode();
+    //let roomCode = `${roomcodeGen++}`
     socketGen++;
-    let room = await CreateRoomEntry(IWDB, roomcodeGen, socketGen);
+    let room = await CreateRoomEntry(IWDB, roomCode, socketGen);
     res.send(room).status(200);
     const wss = new WebSocketServer({ port: socketGen });
     wss.on('connection', (ws) => {
