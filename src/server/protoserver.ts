@@ -35,9 +35,6 @@ async function startMongo() {
 }
 startMongo();
 
-//Seed room code generator
-let roomcodeGen: number = 0;
-
 //Seed socket generator
 let socketGen: number = 7000;
 
@@ -76,7 +73,6 @@ async function createNewCode(): Promise<String> {
 app.get("/create", async (req, res) => {
     console.log("Incoming request on /create!");
     let roomCode = await createNewCode();
-    //let roomCode = `${roomcodeGen++}`
     socketGen++;
     let room = await CreateRoomEntry(IWDB, roomCode, socketGen);
     res.send(room).status(200);
