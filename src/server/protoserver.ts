@@ -1,7 +1,7 @@
 import express, { raw } from 'express';
 import { WebSocket, WebSocketServer } from 'ws';
 import { MongoDbServerUrl, type Room } from './IWDB.ts'
-import { CreateRoomEntry, JoinRequest, UpdateHistory, CloseRoom } from './IWDB.ts'
+import { CreateRoomEntry, RoomSearch, UpdateHistory, CloseRoom } from './IWDB.ts'
 import { Db, MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import config from './app.config.ts';
@@ -35,23 +35,25 @@ async function startMongo() {
 }
 startMongo();
 
-//Seed room code generator
-let roomcodeGen: number = 0;
-
 //Seed socket generator
 let socketGen: number = 7000;
 
 
-function createNewCode() {
+async function createNewCode(): Promise<String> {
     let output = "";
     let characters = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
     let charlen = characters.length;
-    for (let i = 0; i < 6; i++) {
-        output += characters[Math.floor(Math.random() * charlen)];
-    }
-
-    // add roomcode to db
-
+    //Do while loop initialises a code to search against the database.
+    //It will keep generating codes until it finds one that isn't in the database
+    //(I.e a null result on RoomSearch)
+    do {
+        output = "";
+        for (let i = 0; i < 6; i++) {
+            output += characters[Math.floor(Math.random() * charlen)];
+        }
+        console.log("generated code: " + output);
+    } while (await RoomSearch(IWDB, output) !== null);
+	
     return output;
 }
 
@@ -67,9 +69,9 @@ function createNewCode() {
  */
 app.get("/create", async (req, res) => {
     console.log("Incoming request on /create!");
-    roomcodeGen++;
+    let roomCode = await createNewCode();
     socketGen++;
-    let room = await CreateRoomEntry(IWDB, roomcodeGen, socketGen);
+    let room = await CreateRoomEntry(IWDB, roomCode, socketGen);
     res.send(room).status(200);
     const wss = new WebSocketServer({ port: socketGen });
     wss.on('connection', (ws) => {
@@ -105,7 +107,7 @@ app.post("/findroom", async (req, res) => {
     console.log("Incoming find request on /findroom! ");
     let roomcode = req.body.roomcode;
     console.log("code: " + req.body.roomcode);
-    let room = await JoinRequest(IWDB, roomcode);
+    let room = await RoomSearch(IWDB, roomcode);
     if (room) {
         res.status(200).send(room);
     }
