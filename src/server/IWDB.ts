@@ -29,7 +29,7 @@ export interface Room {
  * @author BCampbell
  */
 export async function CreateRoomEntry(db: Db, roomcode: number, socket: number) : Promise<Room | null> {
-a    const collection = db.collection<Room>('Rooms');
+    const collection = db.collection<Room>('Rooms');
     const room: Room = {
         _id: `${roomcode}`,
         socketNumber: socket,
