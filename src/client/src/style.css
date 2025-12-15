@@ -38,6 +38,12 @@ body {
   text-align: center;
 }
 
+.icon-button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
