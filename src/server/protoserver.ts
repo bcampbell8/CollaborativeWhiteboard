@@ -46,17 +46,14 @@ async function createNewCode(): Promise<String> {
     //Do while loop initialises a code to search against the database.
     //It will keep generating codes until it finds one that isn't in the database
     //(I.e a null result on RoomSearch)
-    do{
+    do {
         output = "";
         for (let i = 0; i < 6; i++) {
             output += characters[Math.floor(Math.random() * charlen)];
         }
-        console.log("here's the gen'd code: "+output);
-    } while(await RoomSearch(IWDB, output) !== null)
-    
-
-    // add roomcode to db
-
+        console.log("generated code: " + output);
+    } while (await RoomSearch(IWDB, output) !== null);
+	
     return output;
 }
 
