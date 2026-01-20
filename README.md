@@ -1,10 +1,10 @@
-#Interactive Whiteboard project
+# Interactive Whiteboard project
 
 by Braeden & Dan
 
 
 <hr>
-##How to run:
+## How to run:
 The server needs two processes to run to serve the frontend pages and the backend server
 1. Start by changing the `server_ip` value in src/client/app.config.ts to be the address of the server
 2. If you plan to use a persistent database, start that and set the address:port for it in src/server/app.config.ts
