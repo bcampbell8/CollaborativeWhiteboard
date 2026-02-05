@@ -30,14 +30,6 @@ export default function Participant(props: ParticipantProps) {
         }
     }
 
-    function socketOnMessage(event: any) {
-        const message = JSON.parse(event.data);
-        const messageHeader = message.action;
-        if (messageHeader === "Update") {
-            setRecievedStroke([message.strokeToDraw]);
-        }
-    }
-
     useEffect(() => {
         let roomcode = window.location.pathname.split('/')[2];
         fetch("http://" + props.address + ":2211/findroom", {

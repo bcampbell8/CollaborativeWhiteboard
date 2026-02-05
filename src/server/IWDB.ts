@@ -87,7 +87,7 @@ export async function RoomSearch(db: Db, roomCode: string): Promise<Room | null>
         const room = await collection.findOne<Room>(
             {_id: `${roomCode}`}
         );
-        console.log("here's the room search: "+room);
+
         if (room === null) {
             return null;
         }
