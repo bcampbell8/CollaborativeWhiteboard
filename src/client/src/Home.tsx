@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import HostButton from './assets/HostButton'
 
 
 export type HomeProps = {
@@ -44,7 +45,7 @@ export default function Home(props: HomeProps) {
 			window.location.href = `/participate/${encodeURIComponent(formdata.code)}`;
 		}
 	}
-	
+
 	async function handleSubmitHost() {
 		const roomFormcode = formdata.code;
 		const response = await fetch("http://" + props.address + ":2211/create");
@@ -52,10 +53,13 @@ export default function Home(props: HomeProps) {
 	}
 	
 	return (<>
-		<nav style={{
-			justifyContent: "center"
-		}}>
-			<Link to="/host">Host a room</Link>
+		<div class="center-home">
+			<img src="../collaborative-whiteboard-logo.png"/>
+		</div>
+		<div class="center-home">
+			<p>Click the button below to host a room</p>
+			<HostButton/>
+			<p>Alternatively, enter a room code to join an existing room</p>
 			<form action={handleSubmitParticipant}>
 				<input
 					type="text"
@@ -65,7 +69,7 @@ export default function Home(props: HomeProps) {
 				/>
 				<input type="submit" value="Join" />
 			</form>
-		</nav>
+		</div>
 	</>)
 }
 
