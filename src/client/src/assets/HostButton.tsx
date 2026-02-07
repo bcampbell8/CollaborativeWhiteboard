@@ -19,7 +19,7 @@ function HostButton(props: hostButtonProps){
             window.location.href = `/participate/${encodeURIComponent(incRoom._id)}`
         } catch (error) {
             console.log('Failed to create room. Error: ' + error);
-        }
+        }<
     }
 
     return(
